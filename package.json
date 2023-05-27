@@ -3,6 +3,12 @@
   "scripts": {
     "start": "umi dev",
     "build": "umi build",
+    "start:local": "cross-env REACT_APP_ENV=local UMI_ENV=local umi dev",
+    "start:test": "cross-env REACT_APP_ENV=test UMI_ENV=test umi dev",
+    "start:prod": "cross-env REACT_APP_ENV=prod UMI_ENV=prod umi build",
+    "build:local": "cross-env REACT_APP_ENV=local UMI_ENV=local umi build",
+    "build:test": "cross-env REACT_APP_ENV=test UMI_ENV=test umi build",
+    "build:prod": "cross-env REACT_APP_ENV=prod UMI_ENV=prod umi build",
     "postinstall": "umi generate tmp",
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'",
     "test": "umi-test",
@@ -21,8 +27,13 @@
   },
   "dependencies": {
     "@ant-design/pro-layout": "^6.5.0",
+    "@types/crypto-js": "^4.1.1",
+    "ahooks": "^3.7.7",
+    "cross-env": "^7.0.3",
+    "crypto-js": "^4.1.1",
     "react": "17.x",
     "react-dom": "17.x",
+    "react-use": "^17.4.0",
     "umi": "^3.5.40"
   },
   "devDependencies": {

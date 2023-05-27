@@ -1,0 +1,1 @@
+declare const REACT_APP_ENV: 'local' | 'test' | 'uat' | 'dev' | 'pre' | 'prod' | false;
