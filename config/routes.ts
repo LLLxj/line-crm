@@ -29,8 +29,6 @@
           {
             name: '用户管理',
             path: '/user',
-            permissionCodes: [
-            ],
             routes: [
               {
                 path: '/',
@@ -38,10 +36,8 @@
               },
               {
                 name: '用户列表',
-                icon: 'smile',
                 path: '/user/list',
                 component: './User',
-                permissionCodes: ['达人公海池达人公海池']
               },
             ],
           },
@@ -60,7 +56,36 @@
               },
             ]
           },
-          
+          {
+            name: '客户管理',
+            path: '/customer',
+            routes: [
+              {
+                path: '/',
+                redirect: '/customer/list',
+              },
+              {
+                name: '客户列表',
+                path: '/customer/list',
+                component: './Customer',
+              },
+            ]
+          },
+          {
+            name: '线路管理',
+            path: '/line',
+            routes: [
+              {
+                path: '/',
+                redirect: '/line/list',
+              },
+              {
+                name: '线路列表',
+                path: '/line/list',
+                component: './Line',
+              },
+            ]
+          },
         ],
       },
       {

@@ -14,6 +14,8 @@ const proSettings: DefaultSettings = {
   colorWeak: false,
   title: 'crm',
   pwa: false,
+  iconfontUrl: '//at.alicdn.com/t/c/font_4090775_9hv58p8tj3f.js',
+  // iconfontUrl: '//at.alicdn.com/t/font_2784568_87tps1dprh2.js',
   // iconfontUrl: '//at.alicdn.com/t/font_2784568_glhupq00db6.js',
 };
 

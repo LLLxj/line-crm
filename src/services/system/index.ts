@@ -12,6 +12,16 @@ class System {
     )
   }
 
+  static register (data: any): Promise<any> {
+    return request(
+      `/client/enroll`,
+      {
+        method: 'post',
+        data
+      }
+    )
+  }
+
   static userInfo (data: any): Promise<any> {
     return request(
       `/sys/user/info/${data}`,

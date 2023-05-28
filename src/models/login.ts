@@ -17,6 +17,7 @@ export type LoginModelType = {
   effects: {
     login: Effect,
     getUserInfo: Effect,
+    register: Effect,
     logout: Effect;
   };
   reducers: {
@@ -49,6 +50,23 @@ const Model: LoginModelType = {
       //   payload: _mergeResponse,
       // });
       history.replace('/dashboard');
+    },
+
+    *register (data, { call, put }) {
+      console.log(111)
+      const { payload: { params } } = data
+      const _response = yield System.register(params);
+      let _mergeResponse = {
+        ..._response?.data
+      }
+      // localStorage.setItem('token', _response.data.token);
+      // localStorage.setItem('userId', _response.data.userId);
+
+      // yield put({
+      //   type: 'saveUserInfo',
+      //   payload: _mergeResponse,
+      // });
+      // history.replace('/dashboard');
     },
 
     *getUserInfo (data, { call, put }) {

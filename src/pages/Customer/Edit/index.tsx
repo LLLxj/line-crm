@@ -5,14 +5,14 @@ import { CommonModal } from '@/components'
 import { useRequest } from 'ahooks'
 import UserService from '@/services/user'
 
-interface BindDepsOrUserProps {
+interface CustomerEditProps {
   setRefreshDeps?: () => void;
 }
 
-const UserUpdate = forwardRef((
+const CustomerEdit = forwardRef((
   {
     setRefreshDeps
-  }: BindDepsOrUserProps,
+  }: CustomerEditProps,
   parentRef
 ) => {
 
@@ -141,4 +141,4 @@ const UserUpdate = forwardRef((
   );
 })
 
-export default UserUpdate
+export default CustomerEdit

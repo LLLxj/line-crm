@@ -116,7 +116,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
       logo={null}
       {...props}
       {...settings}
-      onCollapse={handleMenuCollapse}
+      // onCollapse={handleMenuCollapse}
       onMenuHeaderClick={() => history.push('/')}
       menuItemRender={(menuItemProps, defaultDom) => {
         if (
