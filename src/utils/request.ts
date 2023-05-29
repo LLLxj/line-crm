@@ -31,19 +31,19 @@ interface SrmResponseProps extends Response {
  * @zh-CN 异常处理程序
  * @en-US Exception handler
  */
-const errorHandler = (error: { response: Response, data: any }): Response => {
+const errorHandler = (error: { response: Response; data: any }): Response => {
   const { response } = error;
   if (response && response.status) {
     let errorText = codeMessage[response.status] || response.statusText;
     const { status, url } = response;
     if (status === 400) {
-      let errorMessage
+      let errorMessage;
       if (error?.data?.result === 'string') {
-        errorMessage = error?.data?.result
+        errorMessage = error?.data?.result;
       } else {
-        errorMessage = error?.data?.result?.map(item => item.message)
+        errorMessage = error?.data?.result?.map((item) => item.message);
       }
-      errorText = `${error?.data?.msg}-${errorMessage}`
+      errorText = `${error?.data?.msg}-${errorMessage}`;
       notification.error({
         message: `请求错误 ${status}: ${url}`,
         description: errorText,
@@ -81,33 +81,33 @@ const request = extend({
 });
 
 request.interceptors.request.use((url: string, options: any) => {
-  const token = localStorage.getItem('token')
+  const token = localStorage.getItem('token');
   return {
     url,
     options: {
       ...options,
       headers: {
-        token: token,
-      }
-    }
-  }
-})
+        Authorization: token,
+      },
+    },
+  };
+});
 
 request.interceptors.response.use((response: Response) => {
-  const authorization = response.headers.get('authorization')
+  const authorization = response.headers.get('authorization');
   if (authorization) {
-    localStorage.setItem('authorization', authorization)
-    localStorage.setItem('taskCenterToken', authorization)
+    localStorage.setItem('authorization', authorization);
+    localStorage.setItem('taskCenterToken', authorization);
   }
-  return response
-})
+  return response;
+});
 
 const checkStauts = (response: SrmResponseProps) => {
   // if (typeof response === 'object') {
   //   return Promise.resolve(response);
   // }
   switch (response?.code) {
-    case 10000: 
+    case 10000:
     case 0: {
       return response;
     }
@@ -120,11 +120,11 @@ const checkStauts = (response: SrmResponseProps) => {
       return response;
     }
     case 400: {
-      let errorMessage
-      if (typeof(response?.result) === 'string') {
-        errorMessage = response?.result
+      let errorMessage;
+      if (typeof response?.result === 'string') {
+        errorMessage = response?.result;
       } else {
-        errorMessage = response?.result?.map(item => item.message)
+        errorMessage = response?.result?.map((item) => item.message);
       }
       message.error(errorMessage);
       return Promise.reject(response);
@@ -132,12 +132,12 @@ const checkStauts = (response: SrmResponseProps) => {
     case 401: {
       if (response.code === 401) {
         message.warning('登录已失效，请重新登录');
-        localStorage.removeItem('authorization')
-        localStorage.removeItem('refresh-token')
-        const _oldRedirect = localStorage.getItem('redirect')
-        const _pathname = history.location.pathname
+        localStorage.removeItem('authorization');
+        localStorage.removeItem('refresh-token');
+        const _oldRedirect = localStorage.getItem('redirect');
+        const _pathname = history.location.pathname;
         if (!_oldRedirect) {
-          localStorage.setItem('redirect', _pathname)
+          localStorage.setItem('redirect', _pathname);
         }
         history.push('/user/login');
       }
@@ -151,7 +151,7 @@ const checkStauts = (response: SrmResponseProps) => {
       return Promise.resolve(response);
     }
   }
-}
+};
 
 const httpRequest = (url: string, options?: any) => {
   return request(url, options).then((response: any) => checkStauts(response));
