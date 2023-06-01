@@ -44,7 +44,7 @@ const User: React.FC = () => {
       );
       setPages({
         ...pages,
-        total: data?.totalCount,
+        total: data?.data?.totalCount,
       });
       setList(_list);
     },
@@ -138,6 +138,26 @@ const User: React.FC = () => {
     unlockRequest.run(_id);
   };
 
+  const pageChange = (
+    {
+      current,
+      pageSize
+    }: {
+      current: number,
+      pageSize: number
+    }
+  ) => {
+    setPages({
+      ...pages,
+      current,
+      pageSize
+    })
+    getListFn({
+      pageNum: current,
+      pageSize
+    })
+  }
+
   const columns: any[] = [
     {
       title: '用户名',
@@ -228,10 +248,12 @@ const User: React.FC = () => {
         loading={getListRequest?.loading}
         columns={columns}
         dataSource={list}
+        pagination={pages}
         bordered
         scroll={{
           x: tableWidth,
         }}
+        onChange={pageChange}
       />
       <Edit ref={editRef} setRefreshDeps={setRefreshDeps} />
     </div>

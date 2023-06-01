@@ -72,7 +72,6 @@ const Model: LoginModelType = {
     *getUserInfo (data, { call, put }) {
       const userId = localStorage.getItem('userId')
       const _response = yield System.userInfo(userId);
-      console.log(_response);
       let _mergeResponse = {
         ..._response?.data
       }
@@ -102,7 +101,6 @@ const Model: LoginModelType = {
       };
     },
     saveUserInfo(state, action) {
-      console.log(action);
       return {
         ...state,
         userInfo: action.payload || {},

@@ -1,10 +1,11 @@
 import React, { useState, forwardRef, useImperativeHandle } from 'react';
-import { Form, Button, Spin, Input } from 'antd';
+import { Form, Button, Spin, Input, message } from 'antd';
 import { useToggle } from 'react-use';
 import { CommonModal } from '@/components';
 import { useRequest } from 'ahooks';
 import RoleService from '@/services/role';
-
+import PermissionService from '@/services/permission';
+import { SelectLocal } from '@/components'
 interface BindDepsOrUserProps {
   setRefreshDeps?: () => void;
 }
@@ -13,11 +14,13 @@ const RoleEdit = forwardRef(
   ({ setRefreshDeps }: BindDepsOrUserProps, parentRef) => {
     const [visible, setVisible] = useToggle(false);
     const [form] = Form.useForm();
-    const userId = Form.useWatch('userId', form);
+    const roleId = Form.useWatch('roleId', form);
+    const [permissionList, setPermissionList] = useState<any[]>([])
 
     useImperativeHandle(parentRef, () => ({
       init: ({ id }: { id: number }) => {
         setVisible();
+        getRolelist.run()
         if (id) {
           getDetailRequest.run(id);
         }
@@ -29,11 +32,27 @@ const RoleEdit = forwardRef(
       debounceWait: 500,
       onSuccess: (data) => {
         console.log(data);
+        form.setFieldsValue(data?.data)
       },
     });
 
+    const getRolelist = useRequest(
+      PermissionService.all, {
+        manual: true,
+        debounceWait: 500,
+        onSuccess: (data) => {
+          console.log(data);
+          const _permissionList
+            = data?.data?.length
+                ? data?.data
+                : []
+          setPermissionList(_permissionList)
+        },
+      }
+    );
+
     const getUpdateRequestFn = () => {
-      if (userId) {
+      if (roleId) {
         return RoleService.update;
       } else {
         return RoleService.save;
@@ -43,9 +62,10 @@ const RoleEdit = forwardRef(
     const updateRequest = useRequest(getUpdateRequestFn(), {
       manual: true,
       debounceWait: 500,
-      onSuccess: (data) => {
-        console.log(data);
+      onSuccess: () => {
+        message.success('操作成功')
         setRefreshDeps && setRefreshDeps();
+        onCancel()
       },
     });
 
@@ -55,11 +75,9 @@ const RoleEdit = forwardRef(
     };
 
     const submit = async () => {
-      const _value = await form.validateFields();
-      console.log(_value);
+      const formData = await form.validateFields();
       updateRequest.run({
-        ..._value,
-        menuIdList: [],
+        ...formData,
       });
     };
 
@@ -73,7 +91,7 @@ const RoleEdit = forwardRef(
 
     return (
       <CommonModal
-        title={userId ? '编辑' : '新增'}
+        title={roleId ? '编辑' : '新增'}
         visible={visible}
         onCancel={onCancel}
         footer={[
@@ -100,6 +118,7 @@ const RoleEdit = forwardRef(
               span: 18,
             }}
           >
+            <Form.Item name="roleId" hidden />
             <Form.Item
               label="角色名称"
               name="roleName"
@@ -124,6 +143,18 @@ const RoleEdit = forwardRef(
             >
               <Input />
             </Form.Item>
+            <Form.Item
+              label="权限"
+              name="permIdList"
+            >
+              <SelectLocal
+                list={permissionList}
+                mode="multiple"
+                selectKey='permId'
+                selectLabel='permName'
+              /> 
+            </Form.Item>
+            
             <Form.Item label="备注" name="remark">
               <Input />
             </Form.Item>

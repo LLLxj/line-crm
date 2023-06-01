@@ -13,7 +13,7 @@ const EditPermission = forwardRef(
   ({ setRefreshDeps }: EditPermissionProps, parentRef) => {
     const [visible, setVisible] = useToggle(false);
     const [form] = Form.useForm();
-    const userId = Form.useWatch('userId', form);
+    const permId = Form.useWatch('permId', form);
 
     useImperativeHandle(parentRef, () => ({
       init: ({ id }: { id: number }) => {
@@ -35,7 +35,7 @@ const EditPermission = forwardRef(
     });
 
     const getUpdateRequestFn = () => {
-      if (userId) {
+      if (permId) {
         return PermissionService.update;
       } else {
         return PermissionService.save;
@@ -77,7 +77,7 @@ const EditPermission = forwardRef(
 
     return (
       <CommonModal
-        title={userId ? '编辑' : '新增'}
+        title={permId ? '编辑' : '新增'}
         visible={visible}
         onCancel={onCancel}
         footer={[
@@ -104,32 +104,29 @@ const EditPermission = forwardRef(
               span: 18,
             }}
           >
-            <Form.Item name="userId" hidden />
+            <Form.Item name="permId" hidden />
             <Form.Item
-              label="用户名"
-              name="userName"
+              label="权限名称"
+              name="permName"
               rules={[
                 {
                   required: true,
-                  message: '请输入用户名',
+                  message: '请输入权限名称',
                 },
               ]}
             >
               <Input />
             </Form.Item>
             <Form.Item
-              label="手机号"
-              name="phone"
+              label="权限编码"
+              name="perms"
               rules={[
                 {
                   required: true,
-                  message: '请输入手机号',
+                  message: '请输入权限编码',
                 },
               ]}
             >
-              <Input />
-            </Form.Item>
-            <Form.Item name="msisdn" hidden>
               <Input />
             </Form.Item>
           </Form>

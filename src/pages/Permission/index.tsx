@@ -37,8 +37,6 @@ const Permission: React.FC = () => {
           return {
             ...item,
             key: item?.permId,
-            isLockLabel: formatMap['isLock']?.[item?.isLock],
-            statusLabel: formatMap['status']?.[item?.status],
           };
         },
       );
@@ -116,32 +114,12 @@ const Permission: React.FC = () => {
 
   const columns: any[] = [
     {
-      title: '用户名',
-      dataIndex: 'userName',
+      title: '权限名称',
+      dataIndex: 'permName',
     },
     {
-      title: '手机号',
-      dataIndex: 'phone',
-    },
-    {
-      title: '登录IP',
-      dataIndex: 'loginIp',
-    },
-    {
-      title: '状态',
-      dataIndex: 'statusLabel',
-    },
-    {
-      title: '登录错误次数',
-      dataIndex: 'errorNum',
-    },
-    {
-      title: '登录时间',
-      dataIndex: 'loginTime',
-    },
-    {
-      title: '解锁时间',
-      dataIndex: 'unLockTime',
+      title: '权限编码',
+      dataIndex: 'perms',
     },
     {
       title: '操作',

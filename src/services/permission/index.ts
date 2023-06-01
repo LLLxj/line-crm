@@ -9,7 +9,7 @@ class Permission {
 
   static all(): Promise<any> {
     return request(`/sys/perm/list`, {
-      method: 'post',
+      method: 'get',
     });
   }
 

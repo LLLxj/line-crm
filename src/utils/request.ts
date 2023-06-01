@@ -52,7 +52,7 @@ const errorHandler = (error: { response: Response; data: any }): Response => {
     if (status === 500) {
       notification.error({
         message: `请求错误 ${status}: ${url}`,
-        description: error?.data?.result,
+        description: errorText,
       });
     }
     if (status === 502) {
@@ -66,7 +66,7 @@ const errorHandler = (error: { response: Response; data: any }): Response => {
       message: 'Network anomaly',
     });
   }
-  return response;
+  // return response;
 };
 
 /**
@@ -103,9 +103,9 @@ request.interceptors.response.use((response: Response) => {
 });
 
 const checkStauts = (response: SrmResponseProps) => {
-  // if (typeof response === 'object') {
-  //   return Promise.resolve(response);
-  // }
+  if (!response) {
+    return Promise.reject(response);
+  }
   switch (response?.code) {
     case 10000:
     case 0: {

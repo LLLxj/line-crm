@@ -57,6 +57,21 @@
             ]
           },
           {
+            name: '权限管理',
+            path: '/permission',
+            routes: [
+              {
+                path: '/',
+                redirect: '/permission/list',
+              },
+              {
+                name: '权限列表',
+                path: '/permission/list',
+                component: './Permission',
+              },
+            ]
+          },
+          {
             name: '客户管理',
             path: '/customer',
             routes: [

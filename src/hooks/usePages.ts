@@ -3,7 +3,7 @@ import { useState } from "react";
 const usePages = () => {
   const defaultPaegs = {
     current: 1,
-    pageSize: 20,
+    pageSize: 2,
     total: 0
   }
   const [pages, setPages] = useState(defaultPaegs)
