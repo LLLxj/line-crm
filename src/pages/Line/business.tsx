@@ -67,7 +67,7 @@ const Business: React.FC = () => {
   )
 
   const getCustomerRequest = useRequest(
-    CustomerService.list,
+    LineService.getAllCustomer,
     {
       manual: true,
       debounceWait: 500,

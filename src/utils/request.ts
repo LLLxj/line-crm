@@ -38,13 +38,6 @@ const errorHandler = (error: { response: Response; data: any }): Response => {
     let errorText = codeMessage[response.status] || response.statusText;
     const { status, url } = response;
     if (status === 400) {
-      let errorMessage;
-      if (error?.data?.result === 'string') {
-        errorMessage = error?.data?.result;
-      } else {
-        errorMessage = error?.data?.result?.map((item) => item.message);
-      }
-      errorText = `${error?.data?.msg}-${errorMessage}`;
       notification.error({
         message: `请求错误 ${status}: ${url}`,
         description: errorText,
@@ -113,7 +106,7 @@ const checkStauts = (response: SrmResponseProps) => {
       return response;
     }
     case 1: {
-      message.error(response.result);
+      message.error(response.msg);
       return Promise.reject(response);
     }
     case -1: {
@@ -121,13 +114,7 @@ const checkStauts = (response: SrmResponseProps) => {
       return Promise.reject(response);
     }
     case 400: {
-      let errorMessage;
-      if (typeof response?.result === 'string') {
-        errorMessage = response?.result;
-      } else {
-        errorMessage = response?.result?.map((item) => item.message);
-      }
-      message.error(errorMessage);
+      message.error(response.msg);
       return Promise.reject(response);
     }
     case 401: {

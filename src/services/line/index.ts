@@ -1,7 +1,6 @@
 import request from '@/utils/request';
 class Line {
 
-
   static businessList (data: any): Promise<any> {
     return request(
       `/sys/line/client/queryPage`,
@@ -18,6 +17,15 @@ class Line {
       {
         method: 'post',
         data
+      }
+    )
+  }
+
+  static getAllCustomer (): Promise<any> {
+    return request(
+      `/sys/user/client/list`,
+      {
+        method: 'get'
       }
     )
   }
