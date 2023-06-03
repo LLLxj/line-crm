@@ -80,10 +80,7 @@ const Business: React.FC = () => {
   )
 
   useEffect(() => {
-    getCustomerRequest.run({
-      pageNum: 1,
-      pageSize: 1000
-    })
+    getCustomerRequest.run()
   }, [])
 
   const getListFn = (_params = {}) => {

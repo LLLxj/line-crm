@@ -23,7 +23,7 @@ class Line {
 
   static getAllCustomer (): Promise<any> {
     return request(
-      `/sys/user/client/list`,
+      `/sys/user/client/list?userName=`,
       {
         method: 'get'
       }

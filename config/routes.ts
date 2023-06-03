@@ -8,9 +8,19 @@
         redirect: '/login',
       },
       {
+        name: 'register',
+        path: '/register',
+        component: './Register',
+      },
+      {
         name: 'login',
         path: '/login',
         component: './Login',
+      },
+      {
+        name: 'customer-login',
+        path: '/customer-login',
+        component: './Login/customer',
       },
       {
         path: '/',

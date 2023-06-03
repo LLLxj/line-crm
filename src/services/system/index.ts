@@ -24,6 +24,15 @@ class System {
     );
   }
 
+  static getAllBusiness(): Promise<any> {
+    return request(
+      `/sys/user/list`, 
+      {
+        method: 'post',
+      }
+    );
+  }
+
   static logout(data: any): Promise<any> {
     return request(`/logout`, {
       method: 'post',
