@@ -5,7 +5,9 @@ import { CommonModal } from '@/components';
 import { useRequest } from 'ahooks';
 import RoleService from '@/services/role';
 import PermissionService from '@/services/permission';
-import { SelectLocal } from '@/components'
+import { SelectLocal } from '@/components';
+import LineService from '@/services/line';
+
 interface BindDepsOrUserProps {
   setRefreshDeps?: () => void;
 }
@@ -15,41 +17,46 @@ const RoleEdit = forwardRef(
     const [visible, setVisible] = useToggle(false);
     const [form] = Form.useForm();
     const roleId = Form.useWatch('roleId', form);
-    const [permissionList, setPermissionList] = useState<any[]>([])
+    const [permissionList, setPermissionList] = useState<any[]>([]);
+    const [customerList, setCustomerList] = useState<any[]>([]);
 
     useImperativeHandle(parentRef, () => ({
       init: ({ id }: { id: number }) => {
         setVisible();
-        getRolelist.run()
+        getRolelist.run();
         if (id) {
           getDetailRequest.run(id);
         }
       },
     }));
 
+    const getCustomerRequest = useRequest(LineService.getAllCustomer, {
+      manual: true,
+      debounceWait: 500,
+      onSuccess: (data) => {
+        console.log(data);
+        setCustomerList(data?.data);
+      },
+    });
+
     const getDetailRequest = useRequest(RoleService.detail, {
       manual: true,
       debounceWait: 500,
       onSuccess: (data) => {
         console.log(data);
-        form.setFieldsValue(data?.data)
+        form.setFieldsValue(data?.data);
       },
     });
 
-    const getRolelist = useRequest(
-      PermissionService.all, {
-        manual: true,
-        debounceWait: 500,
-        onSuccess: (data) => {
-          console.log(data);
-          const _permissionList
-            = data?.data?.length
-                ? data?.data
-                : []
-          setPermissionList(_permissionList)
-        },
-      }
-    );
+    const getRolelist = useRequest(PermissionService.all, {
+      manual: true,
+      debounceWait: 500,
+      onSuccess: (data) => {
+        console.log(data);
+        const _permissionList = data?.data?.length ? data?.data : [];
+        setPermissionList(_permissionList);
+      },
+    });
 
     const getUpdateRequestFn = () => {
       if (roleId) {
@@ -63,9 +70,9 @@ const RoleEdit = forwardRef(
       manual: true,
       debounceWait: 500,
       onSuccess: () => {
-        message.success('操作成功')
+        message.success('操作成功');
         setRefreshDeps && setRefreshDeps();
-        onCancel()
+        onCancel();
       },
     });
 
@@ -143,18 +150,15 @@ const RoleEdit = forwardRef(
             >
               <Input />
             </Form.Item>
-            <Form.Item
-              label="权限"
-              name="permIdList"
-            >
+            <Form.Item label="权限" name="permIdList">
               <SelectLocal
                 list={permissionList}
                 mode="multiple"
-                selectKey='permId'
-                selectLabel='permName'
-              /> 
+                selectKey="permId"
+                selectLabel="permName"
+              />
             </Form.Item>
-            
+
             <Form.Item label="备注" name="remark">
               <Input />
             </Form.Item>

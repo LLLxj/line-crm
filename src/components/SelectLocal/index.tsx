@@ -4,8 +4,8 @@
  */
 
 import { Select, Spin, Row } from 'antd';
-import type { SelectProps } from 'antd'
-import "./index.less";
+import type { SelectProps } from 'antd';
+import './index.less';
 
 const { Option } = Select;
 
@@ -17,10 +17,10 @@ interface CommonSelectProps<T> extends SelectProps<T> {
   onChange?: (
     value: any,
     label: any | any[],
-    format?: (value: any, options: any) => any
+    format?: (value: any, options: any) => any,
   ) => void;
   placeholder?: string;
-  mode?: "multiple" | "tags";
+  mode?: 'multiple' | 'tags';
   cacheKey?: string; // 缓存key
   refreshDeps?: any; // 刷新依赖
   disabled?: boolean;
@@ -28,7 +28,7 @@ interface CommonSelectProps<T> extends SelectProps<T> {
 }
 
 type CustomSelect = <RecordType extends object = any>(
-  props: CommonSelectProps<RecordType>
+  props: CommonSelectProps<RecordType>,
 ) => JSX.Element;
 
 const CommonSelect: CustomSelect = ({
@@ -45,10 +45,9 @@ const CommonSelect: CustomSelect = ({
   triggerNodeIsNotParent,
   ...props
 }) => {
-
   const onSelectChange = (value, options) => {
     onChange && onChange(value, options);
-  }
+  };
 
   return (
     <Row className="async-select-wrapper">
@@ -57,28 +56,22 @@ const CommonSelect: CustomSelect = ({
         showSearch
         disabled={disabled}
         loading={list?.length === 0}
-        notFoundContent={
-          list?.length === 0
-            ? <Spin size="small" />
-            : null
-        }
+        notFoundContent={list?.length === 0 ? [] : null}
         onChange={onSelectChange}
         placeholder={placeholder}
         mode={mode}
         optionFilterProp="children"
-        getPopupContainer={
-          triggerNode => {
-            return triggerNodeIsNotParent
-                    ? document.body 
-                    : triggerNode.parentNode
-          }
-        }
+        getPopupContainer={(triggerNode) => {
+          return triggerNodeIsNotParent
+            ? document.body
+            : triggerNode.parentNode;
+        }}
         filterOption={(input, option) =>
           option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
         }
         {...props}
       >
-        {list?.map(d => (
+        {list?.map((d) => (
           <Option
             key={d?.[selectKey] + d?.[selectLabel]}
             value={d?.[selectKey]}
@@ -89,7 +82,7 @@ const CommonSelect: CustomSelect = ({
         ))}
       </Select>
     </Row>
-  )
-}
+  );
+};
 
-export default CommonSelect
+export default CommonSelect;

@@ -16,21 +16,15 @@ class System {
   }
 
   static userInfo(): Promise<any> {
-    return request(
-      `/user/getUserPerm`,
-      {
-        method: 'get',
-      }
-    );
+    return request(`/user/getUserPerm`, {
+      method: 'get',
+    });
   }
 
   static getAllBusiness(): Promise<any> {
-    return request(
-      `/sys/user/list`, 
-      {
-        method: 'post',
-      }
-    );
+    return request(`/sys/user/list`, {
+      method: 'get',
+    });
   }
 
   static logout(data: any): Promise<any> {
