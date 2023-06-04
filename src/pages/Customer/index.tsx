@@ -1,76 +1,66 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react'
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useRequest } from 'ahooks';
-import CustomerService from '@/services/customer'
-import { usePages } from '@/hooks'
-import {
-  Table,
-  Form,
-  Row,
-  Col,
-  Input,
-  Button,
-  message
-} from 'antd'
-import { CommonLayoutSpace } from '@/components'
-import { countTableCellWidth } from '@/utils'
-import Edit from './Edit'
-import type { ModalInitRef } from '@/pages/type'
+import CustomerService from '@/services/customer';
+import { usePages } from '@/hooks';
+import { Table, Form, Row, Col, Input, Button, message } from 'antd';
+import { CommonLayoutSpace } from '@/components';
+import { countTableCellWidth } from '@/utils';
+import Edit from './Edit';
+import type { ModalInitRef } from '@/pages/type';
 import { useToggle } from 'react-use';
-import { SelectLocal } from '@/components'
-import { useCommonList } from '@/hooks'
+import { SelectLocal } from '@/components';
+import { useCommonList } from '@/hooks';
+import ChangePwd from './ChangePwd';
 
 const Customer: React.FC = () => {
-
-  const [list, setList] = useState<any[]>([])
-  const [tableWidth, setTableWidth] = useState<number>()
-  const [form] = Form.useForm()
-  const { defaultPaegs, pages, setPages } = usePages()
+  const [list, setList] = useState<any[]>([]);
+  const [tableWidth, setTableWidth] = useState<number>();
+  const [form] = Form.useForm();
+  const { defaultPaegs, pages, setPages } = usePages();
   const [refreshDeps, setRefreshDeps] = useToggle(false);
   const { optionMap: statusOptionsMap } = useCommonList('状态');
   const { optionMap: lockOptionsMap } = useCommonList('锁定');
   const formatMap = {
     status: {
       0: '禁用',
-      1: '正常'
+      1: '正常',
     },
     isLock: {
       0: '是',
-      1: '否'
-    }
-  }
-  const editRef = useRef<ModalInitRef>()
-  const searchColSpan = 6
+      1: '否',
+    },
+  };
+  const editRef = useRef<ModalInitRef>();
+  const changePwdRef = useRef<ModalInitRef>();
+  const searchColSpan = 6;
 
-  const getListRequest = useRequest(
-    CustomerService.list,
-    {
-      manual: true,
-      debounceWait: 500,
-      onSuccess: (data) => {
-        const _list
-          = data?.data?.list
-              ?.map((item: { userId: any; isLock: 0 | 1; status: 0| 1 }) => {
-                  return {
-                    ...item,
-                    key: item?.userId,
-                    isLockLabel: formatMap['isLock']?.[item?.isLock],
-                    statusLabel: formatMap['status']?.[item?.status],
-                  }
-                })
-        setPages({
-          ...pages,
-          total: data?.data?.totalCount
-        })
-        setList(_list)
-      }
-    }
-  )
+  const getListRequest = useRequest(CustomerService.list, {
+    manual: true,
+    debounceWait: 500,
+    onSuccess: (data) => {
+      const _list = data?.data?.list?.map(
+        (item: { userId: any; isLock: 0 | 1; status: 0 | 1 }) => {
+          return {
+            ...item,
+            key: item?.userId,
+            isLockLabel: formatMap['isLock']?.[item?.isLock],
+            statusLabel: formatMap['status']?.[item?.status],
+          };
+        },
+      );
+      setPages({
+        ...pages,
+        total: data?.data?.totalCount,
+      });
+      setList(_list);
+    },
+  });
 
   const usefulRequest = useRequest(CustomerService.normal, {
     manual: true,
     debounceWait: 500,
     onSuccess: () => {
-      message.success('操作成功')
+      message.success('操作成功');
       setRefreshDeps();
     },
   });
@@ -79,7 +69,7 @@ const Customer: React.FC = () => {
     manual: true,
     debounceWait: 500,
     onSuccess: () => {
-      message.success('操作成功')
+      message.success('操作成功');
       setRefreshDeps();
     },
   });
@@ -88,7 +78,7 @@ const Customer: React.FC = () => {
     manual: true,
     debounceWait: 500,
     onSuccess: () => {
-      message.success('操作成功')
+      message.success('操作成功');
       setRefreshDeps();
     },
   });
@@ -97,22 +87,22 @@ const Customer: React.FC = () => {
     manual: true,
     debounceWait: 500,
     onSuccess: () => {
-      message.success('操作成功')
+      message.success('操作成功');
       setRefreshDeps();
     },
   });
 
   useEffect(() => {
-    getListFn()
-  }, [refreshDeps])
+    getListFn();
+  }, [refreshDeps]);
 
   const getListFn = (_params = {}) => {
     getListRequest.run({
       pageNum: pages?.current,
       pageSize: pages?.pageSize,
-      ..._params
-    })
-  }
+      ..._params,
+    });
+  };
 
   const onSearch = async () => {
     const _formData = await form.getFieldsValue();
@@ -127,12 +117,17 @@ const Customer: React.FC = () => {
     getListFn({
       pageNum: 1,
     });
-    setPages(defaultPaegs)
+    setPages(defaultPaegs);
   };
-
 
   const editFn = (_id?: number) => {
     editRef?.current?.init({
+      id: _id,
+    });
+  };
+
+  const changePwdHandle = (_id?: number) => {
+    changePwdRef?.current?.init({
       id: _id,
     });
   };
@@ -154,52 +149,43 @@ const Customer: React.FC = () => {
   };
 
   const renderColumns = useMemo(() => {
-    const _columns
-      = columns?.map(item => {
-          const _width =
-            countTableCellWidth({
-              title: item?.title,
-              titleCol: item?.titleCol,
-            })
-          return {
-            title: item?.title,
-            dataIndex: item?.dataIndex,
-            width: _width,
-            render:
-              item?.render
-              // (_, record) => {
-              //   return (
-              //     <span>{ record?.[item?.dataIndex] || '--' } </span>
-              //   )
-              // }
-          }
-        })
-    const _tableWidth
-      = _columns
-          ?.map(item => item?.width)
-          ?.reduce((prev, cur) => {
-              return prev + cur
-            }, 0)
-    setTableWidth(_tableWidth)
-    return _columns
-  }, [])
+    const _columns = columns?.map((item) => {
+      const _width = countTableCellWidth({
+        title: item?.title,
+        titleCol: item?.titleCol,
+      });
+      return {
+        title: item?.title,
+        dataIndex: item?.dataIndex,
+        width: _width,
+        render: item?.render,
+        // (_, record) => {
+        //   return (
+        //     <span>{ record?.[item?.dataIndex] || '--' } </span>
+        //   )
+        // }
+      };
+    });
+    const _tableWidth = _columns
+      ?.map((item) => item?.width)
+      ?.reduce((prev, cur) => {
+        return prev + cur;
+      }, 0);
+    setTableWidth(_tableWidth);
+    return _columns;
+  }, []);
 
-  const pageChange = (
-    {
-      current,
-      pageSize
-    }: any
-  ) => {
+  const pageChange = ({ current, pageSize }: any) => {
     setPages({
       ...pages,
       current,
-      pageSize
-    })
+      pageSize,
+    });
     getListFn({
       pageNum: current,
-      pageSize
-    })
-  }
+      pageSize,
+    });
+  };
 
   const columns: any[] = [
     {
@@ -251,91 +237,62 @@ const Customer: React.FC = () => {
             <Button type="link" onClick={() => resetPwdHandle(record.userId)}>
               初始化密码
             </Button>
+            <Button type="link" onClick={() => changePwdHandle(record.userId)}>
+              修改密码
+            </Button>
           </>
         );
       },
     },
-  ]
+  ];
 
   return (
     <div>
-       <Form
+      <Form
         form={form}
         labelCol={{
-          span: 10
+          span: 10,
         }}
         wrapperCol={{
-          span: 14
+          span: 14,
         }}
       >
-        <Row
-          gutter={[20, 0]}
-        >
-          <Col
-            span={searchColSpan}
-          >
-            <Form.Item
-              label="用户名"
-              name="userName"
-            >
+        <Row gutter={[20, 0]}>
+          <Col span={searchColSpan}>
+            <Form.Item label="用户名" name="userName">
               <Input />
             </Form.Item>
           </Col>
-          <Col
-            span={searchColSpan}
-          >
-            <Form.Item
-              label="手机号"
-              name="msisdn"
-            >
-              <Input
-                allowClear
-              />
+          <Col span={searchColSpan}>
+            <Form.Item label="手机号" name="msisdn">
+              <Input allowClear />
             </Form.Item>
           </Col>
-          <Col
-            span={searchColSpan}
-          >
-            <Form.Item
-              label="状态"
-              name="status"
-            >
+          <Col span={searchColSpan}>
+            <Form.Item label="状态" name="status">
               <SelectLocal
                 list={statusOptionsMap?.options}
-                selectKey='value'
-                selectLabel='label'
-              >
-              </SelectLocal>
+                selectKey="value"
+                selectLabel="label"
+              ></SelectLocal>
             </Form.Item>
           </Col>
-          <Col
-            span={searchColSpan}
-          >
-            <Form.Item
-              label="是否锁定"
-              name="isLock"
-            >
+          <Col span={searchColSpan}>
+            <Form.Item label="是否锁定" name="isLock">
               <SelectLocal
                 list={lockOptionsMap?.options}
-                selectKey='value'
-                selectLabel='label'
-              >
-              </SelectLocal>
+                selectKey="value"
+                selectLabel="label"
+              ></SelectLocal>
             </Form.Item>
           </Col>
           <Col>
-            <Button
-              type="primary"
-              onClick={() => editFn()}
-            >
+            <Button type="primary" onClick={() => editFn()}>
               新增
             </Button>
           </Col>
           <Col>
-            <Button
-              type="primary"
-              onClick={onSearch}
-            >
+            <Button type="primary" onClick={onSearch}>
               查询
             </Button>
           </Col>
@@ -347,23 +304,21 @@ const Customer: React.FC = () => {
         </Row>
       </Form>
       <Table
-        rowKey={record => record?.key}
+        rowKey={(record) => record?.key}
         loading={getListRequest?.loading}
         columns={columns}
         dataSource={list}
         bordered
         pagination={pages}
         scroll={{
-          x: tableWidth
+          x: tableWidth,
         }}
         onChange={pageChange}
       />
-      <Edit
-        ref={editRef}
-      />
+      <Edit ref={editRef} />
+      <ChangePwd ref={changePwdRef} />
     </div>
-   
   );
-}
+};
 
-export default Customer
+export default Customer;

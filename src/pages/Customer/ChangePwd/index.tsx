@@ -3,80 +3,62 @@ import { Form, Button, Spin, Input, message } from 'antd';
 import { useToggle } from 'react-use';
 import { CommonModal } from '@/components';
 import { useRequest } from 'ahooks';
-import UserService from '@/services/user';
-import RoleService from '@/services/role';
-import { SelectLocal } from '@/components';
-interface BindDepsOrUserProps {
+import CustomerService from '@/services/customer';
+
+interface ChangePwdProps {
   setRefreshDeps?: () => void;
 }
 
-const UserUpdate = forwardRef(
-  ({ setRefreshDeps }: BindDepsOrUserProps, parentRef) => {
+const ChangePwd = forwardRef(
+  ({ setRefreshDeps }: ChangePwdProps, parentRef) => {
     const [visible, setVisible] = useToggle(false);
     const [form] = Form.useForm();
     const userId = Form.useWatch('userId', form);
-    const [roleList, setRoleList] = useState<any[]>([]);
 
     useImperativeHandle(parentRef, () => ({
-      init: ({ id }: { id: number }) => {
+      init: ({ id }: { id?: number }) => {
         setVisible();
-        getRolesRequest.run({
-          pageNum: 1,
-          pageSize: 1000,
-        });
         if (id) {
           getDetailRequest.run(id);
         }
       },
     }));
 
-    const getDetailRequest = useRequest(UserService.detail, {
+    const getDetailRequest = useRequest(CustomerService.detail, {
       manual: true,
       debounceWait: 500,
-      onSuccess: (res) => {
-        console.log(res);
-        const { data } = res;
-        form.setFieldsValue(data);
+      onSuccess: (data) => {
+        console.log(data);
+        form.setFieldsValue({
+          userId: data?.data?.userId,
+          oldPwdEncrypt: data?.data?.msisdn,
+        });
       },
     });
 
-    const getRolesRequest = useRequest(RoleService.list, {
-      manual: true,
-      debounceWait: 500,
-      onSuccess: (res) => {
-        setRoleList(res?.data?.list);
-      },
-    });
-
-    const getUpdateRequestFn = () => {
-      if (userId) {
-        return UserService.update;
-      } else {
-        return UserService.save;
-      }
-    };
-
-    const updateRequest = useRequest(getUpdateRequestFn(), {
+    const updateRequest = useRequest(CustomerService.updatePassword, {
       manual: true,
       debounceWait: 500,
       onSuccess: (data) => {
         console.log(data);
         message.success('操作成功');
         onCancel();
+        setRefreshDeps && setRefreshDeps();
       },
     });
 
     const onCancel = () => {
       setVisible();
       form.resetFields();
-      setRoleList([]);
-      setRefreshDeps && setRefreshDeps();
     };
 
     const submit = async () => {
       const _value = await form.validateFields();
       console.log(_value);
-      updateRequest.run(_value);
+      updateRequest.run({
+        ..._value,
+        oldPwdEncrypt: '88888888',
+      });
     };
 
     const renderLoading = () => {
@@ -89,7 +71,7 @@ const UserUpdate = forwardRef(
 
     return (
       <CommonModal
-        title={userId ? '编辑' : '新增'}
+        title="修改密码"
         visible={visible}
         onCancel={onCancel}
         footer={[
@@ -117,37 +99,12 @@ const UserUpdate = forwardRef(
             }}
           >
             <Form.Item name="userId" hidden />
-            <Form.Item
-              label="用户名"
-              name="userName"
-              rules={[
-                {
-                  required: true,
-                  message: '请输入用户名',
-                },
-              ]}
-            >
+            <Form.Item name="oldPwdEncrypt" hidden />
+            <Form.Item label="密码" name="newPwdEncrypt" required>
               <Input />
             </Form.Item>
-            <Form.Item
-              label="手机号"
-              name="msisdn"
-              rules={[
-                {
-                  required: true,
-                  message: '请输入手机号',
-                },
-              ]}
-            >
+            <Form.Item label="确认密码" name="confirmPwdEncrypt" required>
               <Input />
-            </Form.Item>
-            <Form.Item label="角色" name="roleIdList">
-              <SelectLocal
-                list={roleList}
-                mode="multiple"
-                selectKey="roleId"
-                selectLabel="roleCode"
-              />
             </Form.Item>
           </Form>
         </Spin>
@@ -156,4 +113,4 @@ const UserUpdate = forwardRef(
   },
 );
 
-export default UserUpdate;
+export default ChangePwd;

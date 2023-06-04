@@ -8,7 +8,7 @@ import { countTableCellWidth } from '@/utils';
 import Edit from './Edit';
 import type { ModalInitRef } from '@/pages/type';
 import List from './index';
-import { SelectLocal } from '@/components';
+import { SelectLocal, AutoComplete } from '@/components';
 import CustomerService from '@/services/customer';
 import { useCommonList } from '@/hooks';
 import { useToggle } from 'react-use';
@@ -38,7 +38,6 @@ const Business: React.FC = () => {
     manual: true,
     debounceWait: 500,
     onSuccess: (data) => {
-      console.log(data);
       const _list = data?.data?.list?.map(
         (item: { userId: any; isLock: 0 | 1; status: 0 | 1 }) => {
           return {
@@ -57,22 +56,9 @@ const Business: React.FC = () => {
     },
   });
 
-  const getCustomerRequest = useRequest(LineService.getAllCustomer, {
-    manual: true,
-    debounceWait: 500,
-    onSuccess: (data) => {
-      console.log(data);
-      setCustomerList(data?.data);
-    },
-  });
-
-  useEffect(() => {
-    getCustomerRequest.run();
-  }, []);
-
-  useEffect(() => {
-    getListFn();
-  }, [refreshDeps]);
+  // useEffect(() => {
+  //   getListFn();
+  // }, [refreshDeps]);
 
   const getListFn = (_params = {}) => {
     getListRequest.run({
@@ -165,11 +151,12 @@ const Business: React.FC = () => {
         <Row gutter={[20, 20]}>
           <Col span={searchColSpan}>
             <Form.Item label="客户" name="userId">
-              <SelectLocal
-                list={customerList}
+              <AutoComplete
+                asyncHandle={LineService.getAllCustomer}
+                asyncKeyword="nameOrId"
                 selectKey="userId"
                 selectLabel="userName"
-              ></SelectLocal>
+              />
             </Form.Item>
           </Col>
           <Col span={searchColSpan}>
