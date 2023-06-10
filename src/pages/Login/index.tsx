@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Form, Input, Button, Tabs, Col } from 'antd';
+import { Row, Form, Input, Button, Tabs, Col, message } from 'antd';
 import type { Dispatch } from 'umi';
 import type { ConnectState } from '@/models/connect';
 import { connect } from 'umi';
@@ -7,6 +7,9 @@ import './index.less';
 import * as CrytoJS from 'crypto-js';
 import type { HandleType } from './type';
 import { UserOutlined, PhoneOutlined } from '@ant-design/icons';
+import { AutoComplete } from '@/components';
+import SystemService from '@/services/system';
+import { useRequest } from 'ahooks';
 
 interface LoginProps {
   dispatch: Dispatch;
@@ -20,12 +23,28 @@ const Login: React.FC<LoginProps> = ({ dispatch }) => {
     { label: '注册', key: '注册' },
   ];
 
+  const registerRequest = useRequest(SystemService.register, {
+    manual: true,
+    debounceWait: 500,
+    onSuccess: () => {
+      message.success('注册成功，请登录');
+      setTimeout(() => {
+        toLogin();
+      }, 1000);
+    },
+  });
+
   useEffect(() => {
     form.setFieldsValue({
       msisdn: '1ANeRJ1Oq+zwGsRYmf2upQ==',
       pwdEncrypt: 'string',
     });
   }, []);
+
+  const toLogin = () => {
+    setActivekey('登录');
+    form.resetFields();
+  };
 
   const submit = async () => {
     const _formData = await form.validateFields();
@@ -35,7 +54,7 @@ const Login: React.FC<LoginProps> = ({ dispatch }) => {
       注册: 'login/register',
     };
     dispatch({
-      type: map?.[activeKey],
+      type: 'login/login',
       payload: {
         params: _formData,
         type: 'userinfo',
@@ -49,7 +68,14 @@ const Login: React.FC<LoginProps> = ({ dispatch }) => {
 
   const onChange = (value: HandleType) => {
     console.log(value);
+    form.resetFields();
     setActivekey(value);
+  };
+
+  const register = async () => {
+    await form.validateFields();
+    const formData = await form.getFieldsValue();
+    registerRequest.run(formData);
   };
 
   return (
@@ -84,7 +110,10 @@ const Login: React.FC<LoginProps> = ({ dispatch }) => {
                     },
                   ]}
                 >
-                  <Input addonBefore={<UserOutlined />} />
+                  <Input
+                    addonBefore={<UserOutlined />}
+                    placeholder="请输入手机号"
+                  />
                 </Form.Item>
                 <Form.Item
                   // label="密码"
@@ -96,7 +125,10 @@ const Login: React.FC<LoginProps> = ({ dispatch }) => {
                     },
                   ]}
                 >
-                  <Input addonBefore={<PhoneOutlined />} />
+                  <Input
+                    addonBefore={<PhoneOutlined />}
+                    placeholder="请输入密码"
+                  />
                 </Form.Item>
               </>
             ) : (
@@ -110,7 +142,10 @@ const Login: React.FC<LoginProps> = ({ dispatch }) => {
                     },
                   ]}
                 >
-                  <Input addonBefore={<UserOutlined />} />
+                  <Input
+                    addonBefore={<UserOutlined />}
+                    placeholder="请输入用户名"
+                  />
                 </Form.Item>
                 <Form.Item
                   name="msisdn"
@@ -121,13 +156,31 @@ const Login: React.FC<LoginProps> = ({ dispatch }) => {
                     },
                   ]}
                 >
-                  <Input addonBefore={<PhoneOutlined />} />
+                  <Input
+                    addonBefore={<PhoneOutlined />}
+                    placeholder="请输入手机号"
+                  />
+                </Form.Item>
+                <Form.Item name="saleUserId">
+                  <AutoComplete
+                    asyncHandle={SystemService.getAllBusiness}
+                    asyncKeyword="userName"
+                    selectKey="userId"
+                    selectLabel="userName"
+                    placeholder="请选择业务员"
+                  />
                 </Form.Item>
               </>
             )}
-            <Button type="primary" onClick={submit} block>
-              登录
-            </Button>
+            {activeKey === '登录' ? (
+              <Button type="primary" onClick={submit} block>
+                登录
+              </Button>
+            ) : (
+              <Button type="primary" onClick={register} block>
+                注册
+              </Button>
+            )}
           </Form>
         </Col>
       </Row>

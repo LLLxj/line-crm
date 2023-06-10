@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { useRequest } from 'ahooks';
+import { useRequest, useSize } from 'ahooks';
 import PermissionService from '@/services/permission';
-import { usePages } from '@/hooks';
-import { Table, Form, Row, Col, Input, Button } from 'antd';
-import { CommonLayoutSpace } from '@/components';
+import { usePages, useContainerSize } from '@/hooks';
+import { Table, Form, Row, Col, Input, Button, Space } from 'antd';
+import { CommonLayoutSpace, Access } from '@/components';
 import { countTableCellWidth } from '@/utils';
 import Edit from './Edit';
 import type { ModalInitRef } from '@/pages/type';
@@ -15,6 +15,9 @@ const Permission: React.FC = () => {
   const [form] = Form.useForm();
   const [refreshDeps, setRefreshDeps] = useToggle(false);
   const { defaultPaegs, pages, setPages } = usePages();
+  const { width, height } = useContainerSize();
+  const searchContainerRef = useRef(null);
+  const searchContainerSize = useSize(searchContainerRef);
   const formatMap = {
     status: {
       0: '禁用',
@@ -31,14 +34,12 @@ const Permission: React.FC = () => {
     manual: true,
     debounceWait: 500,
     onSuccess: (data) => {
-      const _list = data?.data?.list?.map(
-        (item: { permId: any}) => {
-          return {
-            ...item,
-            key: item?.permId,
-          };
-        },
-      );
+      const _list = data?.data?.list?.map((item: { permId: any }) => {
+        return {
+          ...item,
+          key: item?.permId,
+        };
+      });
       setPages({
         ...pages,
         total: data?.data?.totalCount,
@@ -51,7 +52,7 @@ const Permission: React.FC = () => {
     manual: true,
     debounceWait: 500,
     onSuccess: () => {
-      onReset()
+      onReset();
     },
   });
 
@@ -79,35 +80,8 @@ const Permission: React.FC = () => {
     getListFn({
       pageNum: 1,
     });
-    setPages(defaultPaegs)
+    setPages(defaultPaegs);
   };
-
-  const renderColumns = useMemo(() => {
-    const _columns = columns?.map((item) => {
-      const _width = countTableCellWidth({
-        title: item?.title,
-        titleCol: item?.titleCol,
-      });
-      return {
-        title: item?.title,
-        dataIndex: item?.dataIndex,
-        width: _width,
-        render: item?.render,
-        // (_, record) => {
-        //   return (
-        //     <span>{ record?.[item?.dataIndex] || '--' } </span>
-        //   )
-        // }
-      };
-    });
-    const _tableWidth = _columns
-      ?.map((item) => item?.width)
-      ?.reduce((prev, cur) => {
-        return prev + cur;
-      }, 0);
-    setTableWidth(_tableWidth);
-    return _columns;
-  }, []);
 
   const editFn = (_id?: number) => {
     editRef?.current?.init({
@@ -119,22 +93,17 @@ const Permission: React.FC = () => {
     deleteRequest.run(_id);
   };
 
-  const pageChange = (
-    {
-      current,
-      pageSize
-    }: any
-  ) => {
+  const pageChange = ({ current, pageSize }: any) => {
     setPages({
       ...pages,
       current,
-      pageSize
-    })
+      pageSize,
+    });
     getListFn({
       pageNum: current,
-      pageSize
-    })
-  }
+      pageSize,
+    });
+  };
 
   const columns: any[] = [
     {
@@ -148,64 +117,103 @@ const Permission: React.FC = () => {
     {
       title: '操作',
       dataIndex: 'handle',
+      fixed: 'right',
       render: (_, record: any) => {
         return (
           <>
-            <Button type="link" onClick={() => editFn(record.permId)}>
-              编辑
-            </Button>
-            <Button type="link" onClick={() => deleteHandle(record.permId)}>
-              删除
-            </Button>
+            <Access permission="更新权限">
+              <Button type="link" onClick={() => editFn(record.permId)}>
+                编辑
+              </Button>
+            </Access>
+            <Access permission="删除权限">
+              <Button type="link" onClick={() => deleteHandle(record.permId)}>
+                删除
+              </Button>
+            </Access>
           </>
         );
       },
     },
   ];
 
+  const renderColumns = useMemo(() => {
+    const _columns = columns?.map((item) => {
+      const _width = countTableCellWidth({
+        title: item?.title,
+        titleCol: item?.titleCol,
+      });
+      return {
+        ...item,
+        title: item?.title,
+        dataIndex: item?.dataIndex,
+        width: _width,
+        ellipsis: true,
+      };
+    });
+    const _tableWidth = _columns
+      ?.map((item) => item?.width)
+      ?.reduce((prev, cur) => {
+        return prev + cur;
+      }, 0);
+    const _searchContainerHeight = searchContainerSize?.height || 0;
+    const _tableHeight = height - 96 - _searchContainerHeight - 200;
+    return {
+      columns: _columns,
+      tableWidth: _tableWidth * 1.5,
+      tableHeight: _tableHeight,
+    };
+  }, [width, searchContainerRef?.current, height]);
+
   return (
-    <div>
-      <Form
-        form={form}
-        labelCol={{
-          span: 8,
-        }}
-        wrapperCol={{
-          span: 16,
-        }}
-      >
-        <Row gutter={[20, 20]}>
-          {/* <Col>
-            <Form.Item label="用户名" name="userName">
-              <Input />
-            </Form.Item>
-          </Col> */}
-          <Col>
-            <Button type="primary" onClick={() => editFn()}>
-              新增
-            </Button>
-          </Col>
-          <Col>
-            <Button type="primary" onClick={onSearch}>
-              查询
-            </Button>
-          </Col>
-        </Row>
-      </Form>
+    <Space
+      direction="vertical"
+      size="middle"
+      style={{
+        width: '100%',
+      }}
+    >
+      <div className="search__container" ref={searchContainerRef}>
+        <Form
+          form={form}
+          labelCol={{
+            span: 8,
+          }}
+          wrapperCol={{
+            span: 16,
+          }}
+        >
+          <Row gutter={[20, 20]}>
+            <Access permission="新增权限">
+              <Col>
+                <Button type="primary" onClick={() => editFn()}>
+                  新增
+                </Button>
+              </Col>
+            </Access>
+            <Col>
+              <Button type="primary" onClick={onSearch}>
+                查询
+              </Button>
+            </Col>
+          </Row>
+        </Form>
+      </div>
       <Table
         rowKey={(record) => record?.key}
         loading={getListRequest?.loading}
-        columns={columns}
+        columns={renderColumns?.columns}
         dataSource={list}
         pagination={pages}
         bordered
         scroll={{
-          x: tableWidth,
+          x: renderColumns?.tableWidth,
+          y: renderColumns?.tableHeight,
         }}
         onChange={pageChange}
       />
       <Edit ref={editRef} setRefreshDeps={setRefreshDeps} />
-    </div>
+    </Space>
   );
 };
 

@@ -99,8 +99,10 @@ const ChangePwd = forwardRef(
             }}
           >
             <Form.Item name="userId" hidden />
-            <Form.Item name="oldPwdEncrypt" hidden />
-            <Form.Item label="密码" name="newPwdEncrypt" required>
+            <Form.Item label="旧密码" name="oldPwdEncrypt">
+              <Input />
+            </Form.Item>
+            <Form.Item label="新密码" name="newPwdEncrypt" required>
               <Input />
             </Form.Item>
             <Form.Item label="确认密码" name="confirmPwdEncrypt" required>

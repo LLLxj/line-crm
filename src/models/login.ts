@@ -1,8 +1,7 @@
 import type { Reducer, Effect } from 'umi';
 import { history } from 'umi';
 import System from '@/services/system';
-import { formatPermissionCodes } from '@/utils'
-
+import { formatPermissionCodes } from '@/utils';
 
 export type StateType = {
   status?: 'ok' | 'error';
@@ -15,14 +14,14 @@ export type LoginModelType = {
   namespace: string;
   state: StateType;
   effects: {
-    login: Effect,
-    getUserInfo: Effect,
-    register: Effect,
+    login: Effect;
+    getUserInfo: Effect;
+    register: Effect;
     logout: Effect;
   };
   reducers: {
     changeLoginStatus: Reducer<StateType>;
-    saveUserInfo: Reducer<any>
+    saveUserInfo: Reducer<any>;
   };
 };
 
@@ -31,17 +30,19 @@ const Model: LoginModelType = {
 
   state: {
     status: undefined,
-    userInfo: {}
+    userInfo: {},
   },
 
   effects: {
-
-    *login (data, { call, put }) {
-      const { payload: { params } } = data
+    *login(data, { call, put }) {
+      const {
+        payload: { params },
+      } = data;
+      console.log(params);
       const _response = yield System.login(params);
       let _mergeResponse = {
-        ..._response?.data
-      }
+        ..._response?.data,
+      };
       localStorage.setItem('token', _response.data.token);
       localStorage.setItem('userId', _response.data.userId);
 
@@ -52,12 +53,14 @@ const Model: LoginModelType = {
       history.replace('/dashboard');
     },
 
-    *register (data, { call, put }) {
-      const { payload: { params } } = data
+    *register(data, { call, put }) {
+      const {
+        payload: { params },
+      } = data;
       const _response = yield System.register(params);
       let _mergeResponse = {
-        ..._response?.data
-      }
+        ..._response?.data,
+      };
       // localStorage.setItem('token', _response.data.token);
       // localStorage.setItem('userId', _response.data.userId);
 
@@ -68,12 +71,11 @@ const Model: LoginModelType = {
       // history.replace('/dashboard');
     },
 
-    *getUserInfo (data, { call, put }) {
+    *getUserInfo(data, { call, put }) {
       const _response = yield System.userInfo();
-      console.log(_response)
       let _mergeResponse = {
-        ..._response?.data
-      }
+        ..._response?.data,
+      };
       yield put({
         type: 'saveUserInfo',
         payload: _mergeResponse,
@@ -84,11 +86,11 @@ const Model: LoginModelType = {
     *logout(_, { call }) {
       const response = yield call(System.logout);
       if (response?.code === 0) {
-        localStorage.removeItem('token')
-        localStorage.removeItem('userId')
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
         history.replace('/login');
       }
-    }
+    },
   },
 
   reducers: {

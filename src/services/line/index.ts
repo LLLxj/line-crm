@@ -54,13 +54,13 @@ class Line {
 
   static exportBisiness(): Promise<any> {
     return request(`/sys/line/client/export`, {
-      method: 'put',
+      method: 'post',
     });
   }
 
   static exportCustomer(): Promise<any> {
-    return request(`/sys/line/client/export`, {
-      method: 'put',
+    return request(`/sys/line/own/export`, {
+      method: 'post',
     });
   }
 }

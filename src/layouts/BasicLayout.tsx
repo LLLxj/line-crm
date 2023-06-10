@@ -17,7 +17,9 @@ import { authRouter } from '@/utils/authRouter';
 import RightContent from '@/components/GlobalHeader/RightContent';
 import type { ConnectState } from '@/models/connect';
 import { getMatchMenu } from '@umijs/route-utils';
-import './BasicLayout.less'
+import './BasicLayout.less';
+import { Vertication } from '@/components';
+import { ModalInitRef } from '@/pages/type';
 
 const noMatch = (
   <Result
@@ -61,37 +63,43 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
     location = {
       pathname: '/',
     },
-    userInfo
+    userInfo,
   } = props;
   const menuDataRef = useRef<MenuDataItem[]>([]);
+
   useEffect(() => {
     if (dispatch) {
       dispatch({
         type: 'login/getUserInfo',
-        payload: {}
+        payload: {},
       });
     }
   }, []);
   /** Init variables */
 
   const formatList = (menuList: MenuDataItem[]): MenuDataItem[] => {
-    // const _list = menuList.map((item) => {
-    //   const localItem = {
-    //     ...item,
-    //     children: item.children ? formatList(item.children) : undefined,
-    //   };
-    //   return localItem;
-    // });
-    return menuList
+    const _list = menuList.map((item) => {
+      const localItem = {
+        ...item,
+        children: item.children ? formatList(item.children) : undefined,
+      };
+      return localItem;
+    });
+    return _list;
   };
-  
+
   const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] => {
     const _list = formatList(menuList);
-    // let _formatList: any[] = _list
-    // if (userInfo?.permissionList?.length) {
-    //   _formatList = authRouter(userInfo, _list)
-    // }
-    return menuList
+    console.log('_list');
+    console.log(_list);
+    console.log(menuList);
+    console.log(userInfo);
+    let _formatList: any[] = _list;
+    if (userInfo?.permNameSet?.length) {
+      _formatList = authRouter(userInfo, _list);
+    }
+    console.log(_formatList);
+    return _formatList;
   };
 
   const handleMenuCollapse = (payload: boolean): void => {
@@ -136,11 +144,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
         return menuData || [];
       }}
     >
-      <div
-        className="content"
-      >
-        {children}
-      </div>
+      <div className="content">{children}</div>
       {/* <Authorized
         authority={authorized!.authority}
         noMatch={noMatch}
@@ -154,5 +158,5 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
 export default connect(({ global, settings, login }: ConnectState) => ({
   collapsed: global.collapsed,
   settings,
-  userInfo: login.userInfo
+  userInfo: login.userInfo,
 }))(BasicLayout);

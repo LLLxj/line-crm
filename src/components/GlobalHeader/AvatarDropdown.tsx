@@ -1,4 +1,8 @@
-import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import {
+  LogoutOutlined,
+  SettingOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 import { Avatar, Menu, Spin } from 'antd';
 import React from 'react';
 import type { ConnectProps } from 'umi';
@@ -14,9 +18,13 @@ export type GlobalHeaderRightProps = {
 } & Partial<ConnectProps>;
 
 class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
-  onMenuClick = (event: { key: React.Key; keyPath: React.Key[]; item: React.ReactInstance }) => {
+  onMenuClick = (event: {
+    key: React.Key;
+    keyPath: React.Key[];
+    item: React.ReactInstance;
+  }) => {
     const { key } = event;
-    console.log(key)
+    console.log(key);
     if (key === 'logout') {
       const { dispatch } = this.props;
 
@@ -28,24 +36,28 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
 
       return;
     } else if (key === 'center') {
-      history.push('/person-center')
+      history.push('/person-center');
+    } else if (key === 'update-password') {
+      history.push('/update-password');
     }
-
   };
 
   render(): React.ReactNode {
-    const {
-      userInfo: info,
-      menu,
-    } = this.props;
-    console.log(info);
-    const { user: userInfo } = info
+    const { userInfo: info, menu } = this.props;
+    const { user: userInfo } = info;
     const menuHeaderDropdown = (
-      <Menu className={styles.menu} selectedKeys={[]} onClick={this.onMenuClick}>
-        
+      <Menu
+        className={styles.menu}
+        selectedKeys={[]}
+        onClick={this.onMenuClick}
+      >
         <Menu.Item key="center">
           <UserOutlined />
           个人中心
+        </Menu.Item>
+        <Menu.Item key="update-password">
+          <SettingOutlined />
+          修改密码
         </Menu.Item>
         {menu && (
           <Menu.Item key="settings">
@@ -64,19 +76,22 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
     return userInfo && userInfo.userName ? (
       <HeaderDropdown overlay={menuHeaderDropdown}>
         <span className={`${styles.action} ${styles.account}`}>
-        { !userInfo.avatar
-            ? <img
-                className={styles.nameOrAvatar}
-                src={`https://avatars.dicebear.com/api/initials/${userInfo.userName.substring(userInfo.userName.length - 2)}.svg?radius=50&margin=14`}
-                alt=""
-              />
-            : <Avatar
-                size="small"
-                className={styles.avatar}
-                src={userInfo.avatar}
-                alt="avatar"
-                />
-          }
+          {!userInfo.avatar ? (
+            <img
+              className={styles.nameOrAvatar}
+              src={`https://avatars.dicebear.com/api/initials/${userInfo.userName.substring(
+                userInfo.userName.length - 2,
+              )}.svg?radius=50&margin=14`}
+              alt=""
+            />
+          ) : (
+            <Avatar
+              size="small"
+              className={styles.avatar}
+              src={userInfo.avatar}
+              alt="avatar"
+            />
+          )}
         </span>
       </HeaderDropdown>
     ) : (
@@ -94,5 +109,5 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
 }
 
 export default connect(({ login }: ConnectState) => ({
-  userInfo: login.userInfo
+  userInfo: login.userInfo,
 }))(AvatarDropdown);

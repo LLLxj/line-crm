@@ -4,6 +4,7 @@ import { Upload, Button, Spin, message } from 'antd';
 import type { UploadProps } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
+import SystemService from '@/services/system';
 
 interface CommonUploadButtonProps extends UploadProps {
   resourceKey?: string; // 模块resource
@@ -18,6 +19,7 @@ interface CommonUploadButtonProps extends UploadProps {
   asyncHandle: (userId: any, data: any) => Promise<any>;
   asyncParams: any;
   uploadCallback: (data: any) => void;
+  deleteCallback?: (data: any) => void;
 }
 
 const CommonUploadButton: React.FC<CommonUploadButtonProps> = ({
@@ -34,6 +36,7 @@ const CommonUploadButton: React.FC<CommonUploadButtonProps> = ({
   asyncHandle,
   asyncParams,
   uploadCallback,
+  deleteCallback,
   ...props
 }) => {
   const [options, setOptions] = useState<any>();
@@ -56,36 +59,49 @@ const CommonUploadButton: React.FC<CommonUploadButtonProps> = ({
     manual: true,
     onSuccess: (data) => {
       console.log(data);
-      setList([data?.data]);
+      const fileItem = {
+        ...fileList?.[0],
+        status: 'done',
+        pathUrl: data?.data?.path,
+        localPath: data?.data?.url,
+      };
+      setFileList([fileItem]);
       uploadCallback && uploadCallback(data?.data);
     },
   });
 
+  const deleteRequest = useRequest(SystemService.deleteFile, {
+    manual: true,
+    onSuccess: (data) => {
+      console.log(data);
+    },
+  });
+
   const customRequest = (options: any) => {
-    console.log(options);
     const _file = options?.file;
-    // let data = new FormData()
-    // data.append('file', _file)
-    console.log(_file);
     uploadRequest.run(asyncParams, _file);
   };
 
-  const previewFile = (file) => {
-    console.warn(file);
+  const previewFile = (file: any) => {
+    console.log(file);
+    window.open(file?.pathUrl, '_blank');
   };
 
-  const onRemove = async (file) => {
-    const _fileList = fileList?.filter(
-      (item) => item.ossUrlKey !== file.ossUrlKey,
-    );
-    const _list = list?.filter((item) => item?.file?.name !== file.name);
-    setList(_list);
+  const onRemove = async (file: any) => {
+    console.log(file);
+    // deleteRequest.run({
+    //   path: file?.localPath
+    // })
+    const _fileList = fileList?.filter((item) => item?.uid !== file?.uid);
     setFileList(_fileList);
-    fileListCallBack(_fileList);
+    deleteCallback &&
+      deleteCallback({
+        path: file?.pathUrl,
+      });
   };
 
   const getChangeValue = (info: any) => {
-    console.log(info);
+    setFileList(info?.fileList);
   };
 
   const renderLoading = () => {

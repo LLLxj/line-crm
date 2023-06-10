@@ -56,9 +56,13 @@ const Business: React.FC = () => {
     },
   });
 
-  // useEffect(() => {
-  //   getListFn();
-  // }, [refreshDeps]);
+  const exportRequest = useRequest(LineService.exportBisiness, {
+    manual: true,
+    debounceWait: 500,
+    onSuccess: (data) => {
+      console.log(data);
+    },
+  });
 
   const getListFn = (_params = {}) => {
     getListRequest.run({
@@ -71,6 +75,7 @@ const Business: React.FC = () => {
   };
 
   const onSearch = async () => {
+    await form.validateFields();
     const _formData = await form.getFieldsValue();
     getListFn(_formData);
   };
@@ -105,6 +110,11 @@ const Business: React.FC = () => {
     setTableWidth(_tableWidth);
     return _columns;
   }, []);
+
+  const exportFn = async () => {
+    await form.validateFields();
+    exportRequest.run();
+  };
 
   const columns: any[] = [
     {
@@ -150,7 +160,16 @@ const Business: React.FC = () => {
       >
         <Row gutter={[20, 20]}>
           <Col span={searchColSpan}>
-            <Form.Item label="客户" name="userId">
+            <Form.Item
+              label="客户"
+              name="userId"
+              rules={[
+                {
+                  required: true,
+                  message: '请选择客户',
+                },
+              ]}
+            >
               <AutoComplete
                 asyncHandle={LineService.getAllCustomer}
                 asyncKeyword="nameOrId"
@@ -168,17 +187,19 @@ const Business: React.FC = () => {
               ></SelectLocal>
             </Form.Item>
           </Col>
-          {/* <Col>
-            <Button
-              type="primary"
-              onClick={editFn}
-            >
+          <Col>
+            <Button type="primary" onClick={editFn}>
               新增
             </Button>
-          </Col> */}
+          </Col>
           <Col>
             <Button type="primary" onClick={onSearch}>
               查询
+            </Button>
+          </Col>
+          <Col>
+            <Button type="primary" onClick={exportFn}>
+              导出
             </Button>
           </Col>
         </Row>

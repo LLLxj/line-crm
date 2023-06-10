@@ -16,7 +16,7 @@ class System {
   }
 
   static vertication(data: any): Promise<any> {
-    return request(`/client/approve`, {
+    return request(`/sys/client/approve`, {
       method: 'post',
       data,
     });
@@ -43,7 +43,7 @@ class System {
   static uploadFront(userId: number, data: any): Promise<any> {
     let _formData = new FormData();
     _formData.append('file', data);
-    return request(`/client/file/upload/front/${userId}`, {
+    return request(`/client/file/upload/front`, {
       method: 'post',
       data: _formData,
       headers: {
@@ -55,12 +55,19 @@ class System {
   static upload(userId: number, data: any): Promise<any> {
     let _formData = new FormData();
     _formData.append('file', data);
-    return request(`/client/file/upload/image/${userId}`, {
+    return request(`/client/file/upload/image`, {
       method: 'post',
       data: _formData,
       headers: {
         'Content-Type': 'multipart/form-data',
       },
+    });
+  }
+
+  static deleteFile(data: any): Promise<any> {
+    return request(`/client/file/delete?path`, {
+      method: 'delete',
+      data: data,
     });
   }
 }

@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { useRequest } from 'ahooks';
+import { useRequest, useSize } from 'ahooks';
 import CustomerService from '@/services/customer';
-import { usePages } from '@/hooks';
-import { Table, Form, Row, Col, Input, Button, message } from 'antd';
-import { CommonLayoutSpace } from '@/components';
+import { usePages, useContainerSize } from '@/hooks';
+import { Table, Form, Row, Col, Input, Button, message, Space } from 'antd';
+import { CommonLayoutSpace, Access } from '@/components';
 import { countTableCellWidth } from '@/utils';
 import Edit from './Edit';
 import type { ModalInitRef } from '@/pages/type';
@@ -20,6 +20,9 @@ const Customer: React.FC = () => {
   const [refreshDeps, setRefreshDeps] = useToggle(false);
   const { optionMap: statusOptionsMap } = useCommonList('状态');
   const { optionMap: lockOptionsMap } = useCommonList('锁定');
+  const { width, height } = useContainerSize();
+  const searchContainerRef = useRef(null);
+  const searchContainerSize = useSize(searchContainerRef);
   const formatMap = {
     status: {
       0: '禁用',
@@ -148,33 +151,6 @@ const Customer: React.FC = () => {
     resetPwdRequest.run(_id);
   };
 
-  const renderColumns = useMemo(() => {
-    const _columns = columns?.map((item) => {
-      const _width = countTableCellWidth({
-        title: item?.title,
-        titleCol: item?.titleCol,
-      });
-      return {
-        title: item?.title,
-        dataIndex: item?.dataIndex,
-        width: _width,
-        render: item?.render,
-        // (_, record) => {
-        //   return (
-        //     <span>{ record?.[item?.dataIndex] || '--' } </span>
-        //   )
-        // }
-      };
-    });
-    const _tableWidth = _columns
-      ?.map((item) => item?.width)
-      ?.reduce((prev, cur) => {
-        return prev + cur;
-      }, 0);
-    setTableWidth(_tableWidth);
-    return _columns;
-  }, []);
-
   const pageChange = ({ current, pageSize }: any) => {
     setPages({
       ...pages,
@@ -219,105 +195,157 @@ const Customer: React.FC = () => {
     {
       title: '操作',
       dataIndex: 'handle',
+      titleCol: 10,
+      fixed: 'right',
       render: (_, record: any) => {
         return (
           <>
             {record.status ? (
-              <Button type="link" onClick={() => disHandle(record.userId)}>
-                禁用
-              </Button>
+              <Access permission="修改客户状态">
+                <Button type="link" onClick={() => disHandle(record.userId)}>
+                  禁用
+                </Button>
+              </Access>
             ) : (
-              <Button type="link" onClick={() => useHandle(record.userId)}>
-                启用
-              </Button>
+              <Access permission="修改客户状态">
+                <Button type="link" onClick={() => useHandle(record.userId)}>
+                  启用
+                </Button>
+              </Access>
             )}
-            <Button type="link" onClick={() => unlockHandle(record.userId)}>
-              解锁用户
-            </Button>
-            <Button type="link" onClick={() => resetPwdHandle(record.userId)}>
-              初始化密码
-            </Button>
-            <Button type="link" onClick={() => changePwdHandle(record.userId)}>
-              修改密码
-            </Button>
+            <Access permission="解锁客户">
+              <Button type="link" onClick={() => unlockHandle(record.userId)}>
+                解锁用户
+              </Button>
+            </Access>
+            <Access permission="重置客户密码">
+              <Button type="link" onClick={() => resetPwdHandle(record.userId)}>
+                初始化密码
+              </Button>
+            </Access>
+            <Access permission="客户修改密码">
+              <Button
+                type="link"
+                onClick={() => changePwdHandle(record.userId)}
+              >
+                修改密码
+              </Button>
+            </Access>
           </>
         );
       },
     },
   ];
 
+  const renderColumns = useMemo(() => {
+    const _columns = columns?.map((item) => {
+      const _width = countTableCellWidth({
+        title: item?.title,
+        titleCol: item?.titleCol,
+      });
+      return {
+        ...item,
+        title: item?.title,
+        dataIndex: item?.dataIndex,
+        width: _width,
+        ellipsis: true,
+      };
+    });
+    const _tableWidth = _columns
+      ?.map((item) => item?.width)
+      ?.reduce((prev, cur) => {
+        return prev + cur;
+      }, 0);
+    const _searchContainerHeight = searchContainerSize?.height || 0;
+    const _tableHeight = height - 96 - _searchContainerHeight - 120;
+    return {
+      columns: _columns,
+      tableWidth: _tableWidth * 2,
+      tableHeight: _tableHeight,
+    };
+  }, [width, searchContainerRef?.current, height]);
+
   return (
-    <div>
-      <Form
-        form={form}
-        labelCol={{
-          span: 10,
-        }}
-        wrapperCol={{
-          span: 14,
-        }}
-      >
-        <Row gutter={[20, 0]}>
-          <Col span={searchColSpan}>
-            <Form.Item label="用户名" name="userName">
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col span={searchColSpan}>
-            <Form.Item label="手机号" name="msisdn">
-              <Input allowClear />
-            </Form.Item>
-          </Col>
-          <Col span={searchColSpan}>
-            <Form.Item label="状态" name="status">
-              <SelectLocal
-                list={statusOptionsMap?.options}
-                selectKey="value"
-                selectLabel="label"
-              ></SelectLocal>
-            </Form.Item>
-          </Col>
-          <Col span={searchColSpan}>
-            <Form.Item label="是否锁定" name="isLock">
-              <SelectLocal
-                list={lockOptionsMap?.options}
-                selectKey="value"
-                selectLabel="label"
-              ></SelectLocal>
-            </Form.Item>
-          </Col>
-          <Col>
-            <Button type="primary" onClick={() => editFn()}>
-              新增
-            </Button>
-          </Col>
-          <Col>
-            <Button type="primary" onClick={onSearch}>
-              查询
-            </Button>
-          </Col>
-          <Col>
-            <Button type="primary" onClick={onReset}>
-              重置
-            </Button>
-          </Col>
-        </Row>
-      </Form>
+    <Space
+      direction="vertical"
+      size="middle"
+      style={{
+        width: '100%',
+      }}
+    >
+      <div className="search__container" ref={searchContainerRef}>
+        <Form
+          form={form}
+          labelCol={{
+            span: 10,
+          }}
+          wrapperCol={{
+            span: 14,
+          }}
+        >
+          <Row gutter={[20, 0]}>
+            <Col span={searchColSpan}>
+              <Form.Item label="用户名" name="userName">
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={searchColSpan}>
+              <Form.Item label="手机号" name="msisdn">
+                <Input allowClear />
+              </Form.Item>
+            </Col>
+            <Col span={searchColSpan}>
+              <Form.Item label="状态" name="status">
+                <SelectLocal
+                  list={statusOptionsMap?.options}
+                  selectKey="value"
+                  selectLabel="label"
+                ></SelectLocal>
+              </Form.Item>
+            </Col>
+            <Col span={searchColSpan}>
+              <Form.Item label="是否锁定" name="isLock">
+                <SelectLocal
+                  list={lockOptionsMap?.options}
+                  selectKey="value"
+                  selectLabel="label"
+                ></SelectLocal>
+              </Form.Item>
+            </Col>
+            {/* <Col>
+              <Button type="primary" onClick={() => editFn()}>
+                新增
+              </Button>
+            </Col> */}
+            <Col>
+              <Button type="primary" onClick={onSearch}>
+                查询
+              </Button>
+            </Col>
+            <Col>
+              <Button type="primary" onClick={onReset}>
+                重置
+              </Button>
+            </Col>
+          </Row>
+        </Form>
+      </div>
       <Table
         rowKey={(record) => record?.key}
         loading={getListRequest?.loading}
-        columns={columns}
+        columns={renderColumns?.columns}
         dataSource={list}
         bordered
         pagination={pages}
         scroll={{
-          x: tableWidth,
+          x: renderColumns?.tableWidth,
+          y: renderColumns?.tableHeight,
         }}
         onChange={pageChange}
       />
       <Edit ref={editRef} />
-      <ChangePwd ref={changePwdRef} />
-    </div>
+      <ChangePwd ref={changePwdRef} />/
+    </Space>
   );
 };
 
