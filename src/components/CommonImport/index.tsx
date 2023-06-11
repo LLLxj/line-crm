@@ -37,8 +37,8 @@ const CommonImport: React.FC<CommonImportProps> = ({
   const importRequest = useRequest(sourceRequestMap?.[resource].template, {
     manual: true,
     debounceWait: 500,
-    onSuccess: (data) => {
-      uploadBlob(data, '线路导入模板.xlsx');
+    onSuccess: (data: any) => {
+      window.open(data?.data, '_blank');
     },
   });
 

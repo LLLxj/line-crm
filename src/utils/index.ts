@@ -91,7 +91,15 @@ const countTableCellWidth = ({ title, titleCol = 0 }) => {
 const uploadBlob = (data: any, fileName: string) => {
   const blob = data;
   let link = document.createElement('a');
-  link.href = URL.createObjectURL(new Blob([blob], { type: 'mimeType' }));
+  link.href = URL.createObjectURL(
+    new Blob(
+      [blob],
+      // { type: 'application/vnd.ms-excel' }
+      {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      },
+    ),
+  );
   link.download = fileName;
   document.body.appendChild(link);
   link.click();
