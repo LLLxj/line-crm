@@ -1,5 +1,5 @@
 import React, { useState, forwardRef, useImperativeHandle } from 'react';
-import { Form, Button, Spin, Input, message } from 'antd';
+import { Form, Button, Spin, Input, message, DatePicker } from 'antd';
 import { useToggle } from 'react-use';
 import { CommonModal } from '@/components';
 import { useRequest } from 'ahooks';
@@ -30,7 +30,6 @@ const LineEdit = forwardRef(({ setRefreshDeps }: LineEditProps, parentRef) => {
     manual: true,
     debounceWait: 500,
     onSuccess: (data) => {
-      console.log(data);
       setCustomerList(data?.data);
     },
   });
@@ -38,9 +37,7 @@ const LineEdit = forwardRef(({ setRefreshDeps }: LineEditProps, parentRef) => {
   const getDetailRequest = useRequest(LineService.detail, {
     manual: true,
     debounceWait: 500,
-    onSuccess: (data) => {
-      console.log(data);
-    },
+    onSuccess: (data) => {},
   });
 
   const getUpdateRequestFn = () => {
@@ -112,15 +109,45 @@ const LineEdit = forwardRef(({ setRefreshDeps }: LineEditProps, parentRef) => {
           }}
         >
           <Form.Item name="lineId" hidden />
-          <Form.Item label="客户" name="userId">
+          <Form.Item
+            label="客户"
+            name="userId"
+            rules={[
+              {
+                required: true,
+                message: '请选择客户',
+              },
+            ]}
+          >
             <SelectLocal
               list={customerList}
               selectKey="userId"
               selectLabel="userName"
             />
           </Form.Item>
-          <Form.Item label="ip地址" name="ipAddr" required>
+          <Form.Item
+            label="ip地址"
+            name="ipAddr"
+            rules={[
+              {
+                required: true,
+                message: '请输入ip地址',
+              },
+            ]}
+          >
             <Input />
+          </Form.Item>
+          <Form.Item
+            label="失效时间"
+            name="failureTime"
+            rules={[
+              {
+                required: true,
+                message: '请输入ip地址',
+              },
+            ]}
+          >
+            <DatePicker />
           </Form.Item>
         </Form>
       </Spin>

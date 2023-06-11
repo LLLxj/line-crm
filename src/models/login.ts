@@ -34,23 +34,19 @@ const Model: LoginModelType = {
   },
 
   effects: {
-    *login(data, { call, put }) {
-      const {
-        payload: { params },
-      } = data;
-      console.log(params);
-      const _response = yield System.login(params);
-      let _mergeResponse = {
-        ..._response?.data,
-      };
-      localStorage.setItem('token', _response.data.token);
-      localStorage.setItem('userId', _response.data.userId);
+    async login(data, { call, put }) {
+      try {
+        const {
+          payload: { params },
+        } = data;
+        const _response = await System.login(params);
+        localStorage.setItem('token', _response.data.token);
+        localStorage.setItem('userId', _response.data.userId);
 
-      // yield put({
-      //   type: 'saveUserInfo',
-      //   payload: _mergeResponse,
-      // });
-      history.replace('/dashboard');
+        history.replace('/dashboard');
+      } catch (err) {
+        console.log(err);
+      }
     },
 
     *register(data, { call, put }) {

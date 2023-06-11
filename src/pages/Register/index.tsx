@@ -16,16 +16,13 @@ const Register: React.FC = () => {
   const getBusinessRequest = useRequest(SystemService.getAllBusiness, {
     manual: true,
     debounceWait: 500,
-    onSuccess: (data) => {
-      console.log(data);
-    },
+    onSuccess: () => {},
   });
 
   const registerRequest = useRequest(SystemService.register, {
     manual: true,
     debounceWait: 500,
     onSuccess: (data) => {
-      console.log(data);
       setUserInfo(data?.data);
       setStep('验证');
     },
@@ -64,7 +61,6 @@ const Register: React.FC = () => {
   };
 
   const getFrontInfo = (data: any) => {
-    console.log(data);
     form.setFieldsValue({
       userName: data?.userName,
       encryptIdCard: data?.idCard,
@@ -74,7 +70,6 @@ const Register: React.FC = () => {
   };
 
   const getBackInfo = (data: any) => {
-    console.log(data);
     form.setFieldsValue({
       backUrl: data?.url,
       backPath: data?.path,
@@ -82,7 +77,6 @@ const Register: React.FC = () => {
   };
 
   const getPersonInfo = (data: any) => {
-    console.log(data);
     form.setFieldsValue({
       personUrl: data?.url,
       personPath: data?.path,

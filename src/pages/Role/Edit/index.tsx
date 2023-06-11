@@ -34,7 +34,6 @@ const RoleEdit = forwardRef(
       manual: true,
       debounceWait: 500,
       onSuccess: (data) => {
-        console.log(data);
         setCustomerList(data?.data);
       },
     });
@@ -43,7 +42,6 @@ const RoleEdit = forwardRef(
       manual: true,
       debounceWait: 500,
       onSuccess: (data) => {
-        console.log(data);
         form.setFieldsValue(data?.data);
       },
     });
@@ -52,7 +50,6 @@ const RoleEdit = forwardRef(
       manual: true,
       debounceWait: 500,
       onSuccess: (data) => {
-        console.log(data);
         const _permissionList = data?.data?.length ? data?.data : [];
         setPermissionList(_permissionList);
       },

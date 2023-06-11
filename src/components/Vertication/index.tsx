@@ -33,14 +33,6 @@ const Vertication = ({
   const [form] = Form.useForm();
   const { user: userInfo } = info;
 
-  const getBusinessRequest = useRequest(SystemService.getAllBusiness, {
-    manual: true,
-    debounceWait: 500,
-    onSuccess: (data) => {
-      console.log(data);
-    },
-  });
-
   const verticationRequest = useRequest(SystemService.vertication, {
     manual: true,
     debounceWait: 500,
@@ -57,7 +49,6 @@ const Vertication = ({
   });
 
   const getFrontInfo = (data: any) => {
-    console.log(data);
     form.setFieldsValue({
       userName: data?.userName,
       encryptIdCard: data?.idCard,
@@ -76,7 +67,6 @@ const Vertication = ({
   };
 
   const getBackInfo = (data: any) => {
-    console.log(data);
     form.setFieldsValue({
       backUrl: data?.url,
       backPath: data?.path,
@@ -84,7 +74,6 @@ const Vertication = ({
   };
 
   const getPersonInfo = (data: any) => {
-    console.log(data);
     form.setFieldsValue({
       personUrl: data?.url,
       personPath: data?.path,

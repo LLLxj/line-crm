@@ -14,8 +14,8 @@ class Line {
     });
   }
 
-  static getAllCustomer(): Promise<any> {
-    return request(`/sys/user/client/list?userName=`, {
+  static getAllCustomer(data: string): Promise<any> {
+    return request(`/sys/user/client/list?userName=${data}`, {
       method: 'get',
     });
   }
@@ -52,15 +52,35 @@ class Line {
     });
   }
 
-  static exportBisiness(): Promise<any> {
+  static exportBisiness(data: any): Promise<any> {
     return request(`/sys/line/client/export`, {
+      method: 'post',
+      data,
+    });
+  }
+
+  static exportCustomer(data: any): Promise<any> {
+    return request(`/sys/line/own/export`, {
+      method: 'post',
+      data,
+    });
+  }
+
+  static getTemplate(): Promise<any> {
+    return request(`/sys/line/export/template`, {
       method: 'post',
     });
   }
 
-  static exportCustomer(): Promise<any> {
-    return request(`/sys/line/own/export`, {
+  static import(data: any): Promise<any> {
+    let _formData = new FormData();
+    _formData.append('file', data);
+    return request(`/sys/line/upload/excel`, {
       method: 'post',
+      data: _formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     });
   }
 }

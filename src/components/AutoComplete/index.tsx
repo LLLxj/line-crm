@@ -24,6 +24,7 @@ interface CommonSelectProps {
   cacheKey?: string; // 缓存key
   refreshDeps?: any; // 刷新依赖
   requestStart?: boolean;
+  valueExtension?: any;
 }
 
 const CommonSelect: React.FC<CommonSelectProps> = ({
@@ -40,6 +41,7 @@ const CommonSelect: React.FC<CommonSelectProps> = ({
   refreshDeps,
   disabled,
   requestStart,
+  valueExtension,
   ...props
 }) => {
   const [value, setValue] = useState<string>('');
@@ -81,7 +83,7 @@ const CommonSelect: React.FC<CommonSelectProps> = ({
     onChange && onChange(value, options);
   };
 
-  const onSearchValue = (value) => {
+  const onSearchValue = (value: string) => {
     setValue(value);
   };
 

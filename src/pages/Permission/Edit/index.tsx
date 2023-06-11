@@ -45,8 +45,7 @@ const EditPermission = forwardRef(
     const updateRequest = useRequest(getUpdateRequestFn(), {
       manual: true,
       debounceWait: 500,
-      onSuccess: (data) => {
-        console.log(data);
+      onSuccess: () => {
         message.success('操作成功');
         onCancel();
       },

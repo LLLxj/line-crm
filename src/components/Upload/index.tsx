@@ -16,7 +16,7 @@ interface CommonUploadButtonProps extends UploadProps {
   descExtensions?: string;
   disabled?: boolean;
   maxSize?: number;
-  asyncHandle: (userId: any, data: any) => Promise<any>;
+  asyncHandle: (data: any) => Promise<any>;
   asyncParams: any;
   uploadCallback: (data: any) => void;
   deleteCallback?: (data: any) => void;
@@ -58,7 +58,6 @@ const CommonUploadButton: React.FC<CommonUploadButtonProps> = ({
   const uploadRequest = useRequest(asyncHandle, {
     manual: true,
     onSuccess: (data) => {
-      console.log(data);
       const fileItem = {
         ...fileList?.[0],
         status: 'done',
@@ -79,16 +78,15 @@ const CommonUploadButton: React.FC<CommonUploadButtonProps> = ({
 
   const customRequest = (options: any) => {
     const _file = options?.file;
-    uploadRequest.run(asyncParams, _file);
+    uploadRequest.run(_file);
+    // uploadRequest.run(asyncParams, _file);
   };
 
   const previewFile = (file: any) => {
-    console.log(file);
     window.open(file?.pathUrl, '_blank');
   };
 
   const onRemove = async (file: any) => {
-    console.log(file);
     // deleteRequest.run({
     //   path: file?.localPath
     // })

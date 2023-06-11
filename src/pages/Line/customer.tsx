@@ -4,9 +4,10 @@ import LineService from '@/services/line';
 import { usePages } from '@/hooks';
 import { Table, Form, Row, Col, Input, Button } from 'antd';
 import { CommonLayoutSpace } from '@/components';
-import { countTableCellWidth } from '@/utils';
+import { countTableCellWidth, uploadBlob } from '@/utils';
 import Edit from './Edit';
 import type { ModalInitRef } from '@/pages/type';
+import List from './index';
 
 const Customer: React.FC = () => {
   const [list, setList] = useState<any[]>([]);
@@ -29,13 +30,11 @@ const Customer: React.FC = () => {
     manual: true,
     debounceWait: 500,
     onSuccess: (data) => {
-      console.log(data);
       const _list = data?.data?.list?.map(
-        (item: { userId: any; isLock: 0 | 1; status: 0 | 1 }) => {
+        (item: { lineId: any; status: 0 | 1 }) => {
           return {
             ...item,
-            key: item?.userId,
-            isLockLabel: formatMap['isLock']?.[item?.isLock],
+            key: item?.lineId,
             statusLabel: formatMap['status']?.[item?.status],
           };
         },
@@ -48,11 +47,11 @@ const Customer: React.FC = () => {
     },
   });
 
-  const exportRequest = useRequest(LineService.exportBisiness, {
+  const exportRequest = useRequest(LineService.exportCustomer, {
     manual: true,
     debounceWait: 500,
     onSuccess: (data) => {
-      console.log(data);
+      uploadBlob(data, '线路列表.xlsx');
     },
   });
 
@@ -80,7 +79,7 @@ const Customer: React.FC = () => {
   };
 
   const exportFn = () => {
-    exportRequest.run();
+    exportRequest.run({});
   };
 
   const renderColumns = useMemo(() => {
@@ -178,7 +177,8 @@ const Customer: React.FC = () => {
           </Col>
         </Row>
       </Form>
-      <Table
+      <List list={list} pages={pages} loading={getListRequest?.loading} />
+      {/* <Table
         rowKey={(record) => record?.key}
         loading={getListRequest?.loading}
         columns={columns}
@@ -187,7 +187,7 @@ const Customer: React.FC = () => {
         scroll={{
           x: tableWidth,
         }}
-      />
+      /> */}
       <Edit ref={editRef} />
     </div>
   );

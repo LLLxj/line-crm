@@ -1,18 +1,17 @@
 import React, { useEffect } from 'react';
-import { Form, Row, Input } from 'antd';
+import { Form, Row, Input, Image } from 'antd';
 import { connect } from 'umi';
 import type { ConnectState } from '@/models/connect';
 import CustomerService from '@/services/customer';
 import { useRequest } from 'ahooks';
 import { useCommonList } from '@/hooks';
-import { SelectLocal } from '@/components';
+import { SelectLocal, PreviewPic } from '@/components';
 
 interface PersonCenterProps {
   userInfo: any;
 }
 
 const PersonCenter: React.FC<PersonCenterProps> = ({ userInfo }) => {
-  console.log(userInfo);
   const {
     user: { userId },
   } = userInfo;
@@ -27,7 +26,6 @@ const PersonCenter: React.FC<PersonCenterProps> = ({ userInfo }) => {
     manual: true,
     debounceWait: 500,
     onSuccess: (data) => {
-      console.log(data);
       form.setFieldsValue(data?.data);
     },
   });
@@ -67,13 +65,13 @@ const PersonCenter: React.FC<PersonCenterProps> = ({ userInfo }) => {
           />
         </Form.Item>
         <Form.Item label="身份证正面照" name="frontPath">
-          <img src={frontPath} alt="" />
+          <Image width={80} src={frontPath} />
         </Form.Item>
         <Form.Item label="身份证背面照" name="backPath">
-          <img src={backPath} alt="" />
+          <Image width={80} src={backPath} />
         </Form.Item>
         <Form.Item label="个人照" name="personPath">
-          <img src={personPath} alt="" />
+          <Image width={80} src={personPath} />
         </Form.Item>
       </Form>
     </Row>

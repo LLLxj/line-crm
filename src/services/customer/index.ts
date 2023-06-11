@@ -63,6 +63,12 @@ class Customer {
       method: 'put',
     });
   }
+
+  static updateBelong(data: number): Promise<any> {
+    return request(`/sys/client/change/sale/${data}`, {
+      method: 'put',
+    });
+  }
 }
 
 export default Customer;

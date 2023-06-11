@@ -5,6 +5,8 @@ import AutoComplete from './AutoComplete';
 import CommonUpload from './Upload';
 import Vertication from './Vertication';
 import Access from './Access';
+import CommonImport from './CommonImport';
+import PreviewPic from './PreviewPic';
 
 export {
   CommonLayoutSpace,
@@ -14,4 +16,6 @@ export {
   CommonUpload,
   Vertication,
   Access,
+  CommonImport,
+  PreviewPic,
 };

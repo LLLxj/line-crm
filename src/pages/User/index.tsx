@@ -40,7 +40,6 @@ const User: React.FC = () => {
     manual: true,
     debounceWait: 500,
     onSuccess: (data) => {
-      console.log(data);
       const _list = data?.data?.list?.map(
         (item: { userId: any; isLock: 0 | 1; status: 0 | 1 }) => {
           return {

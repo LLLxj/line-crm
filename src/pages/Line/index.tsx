@@ -1,19 +1,12 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react'
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useRequest } from 'ahooks';
-import LineService from '@/services/line'
-import { usePages } from '@/hooks'
-import {
-  Table,
-  Form,
-  Row,
-  Col,
-  Input,
-  Button
-} from 'antd'
-import { CommonLayoutSpace } from '@/components'
-import { countTableCellWidth } from '@/utils'
-import Edit from './Edit'
-import type { ModalInitRef } from '@/pages/type'
+import LineService from '@/services/line';
+import { usePages } from '@/hooks';
+import { Table, Form, Row, Col, Input, Button } from 'antd';
+import { CommonLayoutSpace } from '@/components';
+import { countTableCellWidth } from '@/utils';
+import Edit from './Edit';
+import type { ModalInitRef } from '@/pages/type';
 
 interface ListProps {
   list: any[];
@@ -21,47 +14,29 @@ interface ListProps {
   pages: any;
 }
 
-const List: React.FC<ListProps> = ({
-  list,
-  pages,
-  loading
-}) => {
-
-
+const List: React.FC<ListProps> = ({ list, pages, loading }) => {
   const columns: any[] = [
     {
       title: '用户名',
       dataIndex: 'userName',
     },
     {
-      title: '手机号',
-      dataIndex: 'phone',
+      title: 'ip地址',
+      dataIndex: 'ipAddr',
     },
     {
-      title: '登录IP',
-      dataIndex: 'loginIp',
+      title: '失效时间',
+      dataIndex: 'failureTime',
     },
     {
       title: '状态',
-      dataIndex: 'status',
+      dataIndex: 'statusLabel',
     },
-    {
-      title: '登录错误次数',
-      dataIndex: 'errorNum',
-    },
-    {
-      title: '登录时间',
-      dataIndex: 'loginTime',
-    },
-    {
-      title: '解锁时间',
-      dataIndex: 'unLockTime',
-    }
-  ]
+  ];
 
   return (
     <Table
-      rowKey={record => record?.key}
+      rowKey={(record) => record?.key}
       loading={loading}
       columns={columns}
       dataSource={list}
@@ -72,6 +47,6 @@ const List: React.FC<ListProps> = ({
       // }}
     />
   );
-}
+};
 
-export default List
+export default List;

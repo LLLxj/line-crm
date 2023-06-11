@@ -90,15 +90,10 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
 
   const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] => {
     const _list = formatList(menuList);
-    console.log('_list');
-    console.log(_list);
-    console.log(menuList);
-    console.log(userInfo);
     let _formatList: any[] = _list;
     if (userInfo?.permNameSet?.length) {
       _formatList = authRouter(userInfo, _list);
     }
-    console.log(_formatList);
     return _formatList;
   };
 

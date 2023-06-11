@@ -4,14 +4,16 @@ import LineService from '@/services/line';
 import { usePages } from '@/hooks';
 import { Table, Form, Row, Col, Input, Button } from 'antd';
 import { CommonLayoutSpace } from '@/components';
-import { countTableCellWidth } from '@/utils';
+import { countTableCellWidth, uploadBlob, download } from '@/utils';
 import Edit from './Edit';
 import type { ModalInitRef } from '@/pages/type';
 import List from './index';
-import { SelectLocal, AutoComplete } from '@/components';
+import { SelectLocal, AutoComplete, CommonImport } from '@/components';
 import CustomerService from '@/services/customer';
 import { useCommonList } from '@/hooks';
 import { useToggle } from 'react-use';
+import { useLocation } from 'react-router-dom';
+import queryString from 'query-string';
 
 const Business: React.FC = () => {
   const [list, setList] = useState<any[]>([]);
@@ -20,6 +22,12 @@ const Business: React.FC = () => {
   const [refreshDeps, setRefreshDeps] = useToggle(false);
   const { defaultPaegs, pages, setPages } = usePages();
   const { optionMap: statusOptionsMap } = useCommonList('状态');
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  // 获取具体的搜索参数值
+  const userName = searchParams.get('userName');
+  const userId = searchParams.get('userId');
+  // const queryParams = queryString.parse(location.search);
   const formatMap = {
     status: {
       0: '禁用',
@@ -39,12 +47,12 @@ const Business: React.FC = () => {
     debounceWait: 500,
     onSuccess: (data) => {
       const _list = data?.data?.list?.map(
-        (item: { userId: any; isLock: 0 | 1; status: 0 | 1 }) => {
+        (item: { lineId: any; isLock: 0 | 1; status: 0 | 1 }) => {
           return {
             ...item,
-            key: item?.userId,
+            key: item?.lineId,
             isLock: formatMap['isLock']?.[item?.isLock],
-            status: formatMap['status']?.[item?.status],
+            statusLabel: formatMap['status']?.[item?.status],
           };
         },
       );
@@ -60,9 +68,17 @@ const Business: React.FC = () => {
     manual: true,
     debounceWait: 500,
     onSuccess: (data) => {
-      console.log(data);
+      uploadBlob(data, '线路列表.xlsx');
     },
   });
+
+  useEffect(() => {
+    if (userName) {
+      getListFn({
+        userId: userId,
+      });
+    }
+  }, [userId]);
 
   const getListFn = (_params = {}) => {
     getListRequest.run({
@@ -95,11 +111,6 @@ const Business: React.FC = () => {
         dataIndex: item?.dataIndex,
         width: _width,
         render: item?.render,
-        // (_, record) => {
-        //   return (
-        //     <span>{ record?.[item?.dataIndex] || '--' } </span>
-        //   )
-        // }
       };
     });
     const _tableWidth = _columns
@@ -113,7 +124,8 @@ const Business: React.FC = () => {
 
   const exportFn = async () => {
     await form.validateFields();
-    exportRequest.run();
+    const formData = await form.getFieldsValue();
+    exportRequest.run(formData);
   };
 
   const columns: any[] = [
@@ -122,28 +134,16 @@ const Business: React.FC = () => {
       dataIndex: 'userName',
     },
     {
-      title: '手机号',
-      dataIndex: 'phone',
+      title: 'ip地址',
+      dataIndex: 'ipAddr',
     },
     {
-      title: '登录IP',
-      dataIndex: 'loginIp',
+      title: '失效时间',
+      dataIndex: 'failureTime',
     },
     {
       title: '状态',
-      dataIndex: 'status',
-    },
-    {
-      title: '登录错误次数',
-      dataIndex: 'errorNum',
-    },
-    {
-      title: '登录时间',
-      dataIndex: 'loginTime',
-    },
-    {
-      title: '解锁时间',
-      dataIndex: 'unLockTime',
+      dataIndex: 'statusLabel',
     },
   ];
 
@@ -175,6 +175,10 @@ const Business: React.FC = () => {
                 asyncKeyword="nameOrId"
                 selectKey="userId"
                 selectLabel="userName"
+                valueExtension={{
+                  userName,
+                  userId,
+                }}
               />
             </Form.Item>
           </Col>
@@ -201,6 +205,13 @@ const Business: React.FC = () => {
             <Button type="primary" onClick={exportFn}>
               导出
             </Button>
+          </Col>
+          <Col>
+            <CommonImport
+              resource="线路"
+              buttonLabel="批量导入"
+              setRefreshDeps={setRefreshDeps}
+            />
           </Col>
         </Row>
       </Form>

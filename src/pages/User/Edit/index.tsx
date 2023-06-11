@@ -60,7 +60,6 @@ const UserUpdate = forwardRef(
       manual: true,
       debounceWait: 500,
       onSuccess: (data) => {
-        console.log(data);
         message.success('操作成功');
         onCancel();
       },

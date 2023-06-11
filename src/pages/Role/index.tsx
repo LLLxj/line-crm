@@ -76,16 +76,16 @@ const Role: React.FC = () => {
 
   useEffect(() => {
     getListFn();
-    const plaintext = 'string';
-    const secretKey = 'lqgh6wk83975l826';
-    console.log();
-    const result = '1ANeRJ1Oq+zwGsRYmf2upQ==';
-    const ciphertext = AES.encrypt(plaintext, secretKey).toString();
-    console.log(ciphertext);
-    console.log(result === ciphertext);
-    var bytes = AES.encrypt(result, secretKey);
-    console.log(bytes);
-    console.log(plaintext === ciphertext);
+    // const plaintext = 'string';
+    // const secretKey = 'lqgh6wk83975l826';
+    // console.log();
+    // const result = '1ANeRJ1Oq+zwGsRYmf2upQ==';
+    // const ciphertext = AES.encrypt(plaintext, secretKey).toString();
+    // console.log(ciphertext);
+    // console.log(result === ciphertext);
+    // var bytes = AES.encrypt(result, secretKey);
+    // console.log(bytes);
+    // console.log(plaintext === ciphertext);
   }, [refreshDeps]);
 
   const getListFn = (_params = {}) => {

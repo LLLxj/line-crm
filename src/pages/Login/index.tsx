@@ -6,7 +6,7 @@ import { connect } from 'umi';
 import './index.less';
 import * as CrytoJS from 'crypto-js';
 import type { HandleType } from './type';
-import { UserOutlined, PhoneOutlined } from '@ant-design/icons';
+import { KeyOutlined, PhoneOutlined, UserOutlined } from '@ant-design/icons';
 import { AutoComplete } from '@/components';
 import SystemService from '@/services/system';
 import { useRequest } from 'ahooks';
@@ -34,13 +34,6 @@ const Login: React.FC<LoginProps> = ({ dispatch }) => {
     },
   });
 
-  useEffect(() => {
-    form.setFieldsValue({
-      msisdn: '1ANeRJ1Oq+zwGsRYmf2upQ==',
-      pwdEncrypt: 'string',
-    });
-  }, []);
-
   const toLogin = () => {
     setActivekey('登录');
     form.resetFields();
@@ -48,18 +41,15 @@ const Login: React.FC<LoginProps> = ({ dispatch }) => {
 
   const submit = async () => {
     const _formData = await form.validateFields();
-    console.log(_formData);
-    const map = {
-      登录: 'login/login',
-      注册: 'login/register',
-    };
-    dispatch({
-      type: 'login/login',
-      payload: {
-        params: _formData,
-        type: 'userinfo',
-      },
-    });
+    if (dispatch) {
+      dispatch({
+        type: 'login/login',
+        payload: {
+          params: _formData,
+          type: 'userinfo',
+        },
+      });
+    }
   };
 
   const encryptFn = () => {
@@ -67,7 +57,6 @@ const Login: React.FC<LoginProps> = ({ dispatch }) => {
   };
 
   const onChange = (value: HandleType) => {
-    console.log(value);
     form.resetFields();
     setActivekey(value);
   };
@@ -111,7 +100,7 @@ const Login: React.FC<LoginProps> = ({ dispatch }) => {
                   ]}
                 >
                   <Input
-                    addonBefore={<UserOutlined />}
+                    addonBefore={<PhoneOutlined />}
                     placeholder="请输入手机号"
                   />
                 </Form.Item>
@@ -125,8 +114,8 @@ const Login: React.FC<LoginProps> = ({ dispatch }) => {
                     },
                   ]}
                 >
-                  <Input
-                    addonBefore={<PhoneOutlined />}
+                  <Input.Password
+                    addonBefore={<KeyOutlined />}
                     placeholder="请输入密码"
                   />
                 </Form.Item>

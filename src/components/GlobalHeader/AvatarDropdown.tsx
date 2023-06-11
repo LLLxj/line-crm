@@ -2,6 +2,7 @@ import {
   LogoutOutlined,
   SettingOutlined,
   UserOutlined,
+  KeyOutlined,
 } from '@ant-design/icons';
 import { Avatar, Menu, Spin } from 'antd';
 import React from 'react';
@@ -24,7 +25,6 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
     item: React.ReactInstance;
   }) => {
     const { key } = event;
-    console.log(key);
     if (key === 'logout') {
       const { dispatch } = this.props;
 
@@ -37,8 +37,8 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
       return;
     } else if (key === 'center') {
       history.push('/person-center');
-    } else if (key === 'update-password') {
-      history.push('/update-password');
+    } else if (key === 'update-belong') {
+      history.push('/update-belong');
     }
   };
 
@@ -56,8 +56,12 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
           个人中心
         </Menu.Item>
         <Menu.Item key="update-password">
-          <SettingOutlined />
+          <KeyOutlined />
           修改密码
+        </Menu.Item>
+        <Menu.Item key="update-belong">
+          <SettingOutlined />
+          修改管理员
         </Menu.Item>
         {menu && (
           <Menu.Item key="settings">

@@ -39,6 +39,12 @@
             hideInMenu: true,
           },
           {
+            path: '/update-belong',
+            name: '修改管理员',
+            component: './UpdateBelong',
+            hideInMenu: true,
+          },
+          {
             path: '/person-center',
             name: '个人中心',
             component: './PersonCenter',

@@ -40,7 +40,7 @@ class System {
     });
   }
 
-  static uploadFront(userId: number, data: any): Promise<any> {
+  static uploadFront(data: any): Promise<any> {
     let _formData = new FormData();
     _formData.append('file', data);
     return request(`/client/file/upload/front`, {
@@ -52,7 +52,7 @@ class System {
     });
   }
 
-  static upload(userId: number, data: any): Promise<any> {
+  static upload(data: any): Promise<any> {
     let _formData = new FormData();
     _formData.append('file', data);
     return request(`/client/file/upload/image`, {

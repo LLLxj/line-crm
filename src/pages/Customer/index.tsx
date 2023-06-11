@@ -11,6 +11,7 @@ import { useToggle } from 'react-use';
 import { SelectLocal } from '@/components';
 import { useCommonList } from '@/hooks';
 import ChangePwd from './ChangePwd';
+import { history } from 'umi';
 
 const Customer: React.FC = () => {
   const [list, setList] = useState<any[]>([]);
@@ -151,6 +152,12 @@ const Customer: React.FC = () => {
     resetPwdRequest.run(_id);
   };
 
+  const checkLine = (_record: any) => {
+    history.push(
+      `/line/business/list?userName=${_record?.userName}&userId=${_record?.userId}`,
+    );
+  };
+
   const pageChange = ({ current, pageSize }: any) => {
     setPages({
       ...pages,
@@ -195,7 +202,7 @@ const Customer: React.FC = () => {
     {
       title: '操作',
       dataIndex: 'handle',
-      titleCol: 10,
+      titleCol: 12,
       fixed: 'right',
       render: (_, record: any) => {
         return (
@@ -231,6 +238,9 @@ const Customer: React.FC = () => {
                 修改密码
               </Button>
             </Access>
+            <Button type="link" onClick={() => checkLine(record)}>
+              线路
+            </Button>
           </>
         );
       },
@@ -257,7 +267,7 @@ const Customer: React.FC = () => {
         return prev + cur;
       }, 0);
     const _searchContainerHeight = searchContainerSize?.height || 0;
-    const _tableHeight = height - 96 - _searchContainerHeight - 120;
+    const _tableHeight = height - 96 - _searchContainerHeight - 240;
     return {
       columns: _columns,
       tableWidth: _tableWidth * 2,

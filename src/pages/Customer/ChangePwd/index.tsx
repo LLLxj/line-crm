@@ -28,7 +28,6 @@ const ChangePwd = forwardRef(
       manual: true,
       debounceWait: 500,
       onSuccess: (data) => {
-        console.log(data);
         form.setFieldsValue({
           userId: data?.data?.userId,
           oldPwdEncrypt: data?.data?.msisdn,
@@ -39,8 +38,7 @@ const ChangePwd = forwardRef(
     const updateRequest = useRequest(CustomerService.updatePassword, {
       manual: true,
       debounceWait: 500,
-      onSuccess: (data) => {
-        console.log(data);
+      onSuccess: () => {
         message.success('操作成功');
         onCancel();
         setRefreshDeps && setRefreshDeps();

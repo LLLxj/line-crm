@@ -4,47 +4,39 @@ import { connect } from 'umi';
 import type { ConnectState } from '@/models/connect';
 import CustomerService from '@/services/customer';
 import { useRequest } from 'ahooks';
-import { useCommonList } from '@/hooks';
-import { SelectLocal } from '@/components';
 import type { Dispatch } from 'umi';
+import { AutoComplete } from '@/components';
+import SystemService from '@/services/system';
 
-interface UpdatePasswordProps {
+interface UpdateBelongProps {
   userInfo: any;
   dispatch: Dispatch;
 }
 
-const UpdatePassword: React.FC<UpdatePasswordProps> = ({
+const UpdateBelong: React.FC<UpdateBelongProps> = ({
   userInfo: info,
   dispatch,
 }) => {
   const [form] = Form.useForm();
 
-  const updateRequest = useRequest(CustomerService.updatePassword, {
+  const updateRequest = useRequest(CustomerService.updateBelong, {
     manual: true,
     debounceWait: 500,
-    onSuccess: (data) => {
+    onSuccess: () => {
       message.success('操作成功，请重新登录');
       if (dispatch) {
         setTimeout(() => {
           dispatch({
-            type: 'login/logout',
+            type: 'login/login',
           });
         }, 1000);
       }
     },
   });
 
-  useEffect(() => {
-    if (info?.user?.userId) {
-      form.setFieldsValue({
-        userId: info?.user?.userId,
-      });
-    }
-  }, []);
-
   const submit = async () => {
-    const formData = await form.validateFields();
-    updateRequest.run(formData);
+    const { saleUserId } = await form.validateFields();
+    updateRequest.run(saleUserId);
   };
 
   return (
@@ -58,15 +50,23 @@ const UpdatePassword: React.FC<UpdatePasswordProps> = ({
           span: 14,
         }}
       >
-        <Form.Item name="userId" hidden />
-        <Form.Item label="旧密码" name="oldPwdEncrypt" required>
-          <Input />
-        </Form.Item>
-        <Form.Item label="新密码" name="newPwdEncrypt" required>
-          <Input />
-        </Form.Item>
-        <Form.Item label="确认密码" name="confirmPwdEncrypt" required>
-          <Input />
+        <Form.Item
+          label="所属管理员"
+          name="saleUserId"
+          rules={[
+            {
+              required: true,
+              message: '请选择',
+            },
+          ]}
+        >
+          <AutoComplete
+            asyncHandle={SystemService.getAllBusiness}
+            asyncKeyword="userName"
+            selectKey="userId"
+            selectLabel="userName"
+            placeholder="请选择所属管理员"
+          />
         </Form.Item>
         <Form.Item>
           <Button type="primary" onClick={submit} block>
@@ -80,4 +80,4 @@ const UpdatePassword: React.FC<UpdatePasswordProps> = ({
 
 export default connect(({ login }: ConnectState) => ({
   userInfo: login.userInfo,
-}))(UpdatePassword);
+}))(UpdateBelong);
