@@ -20,6 +20,7 @@ interface CommonUploadButtonProps extends UploadProps {
   asyncParams: any;
   uploadCallback: (data: any) => void;
   deleteCallback?: (data: any) => void;
+  showFileList?: boolean;
 }
 
 const CommonUploadButton: React.FC<CommonUploadButtonProps> = ({
@@ -37,6 +38,7 @@ const CommonUploadButton: React.FC<CommonUploadButtonProps> = ({
   asyncParams,
   uploadCallback,
   deleteCallback,
+  showFileList = true,
   ...props
 }) => {
   const [options, setOptions] = useState<any>();
@@ -99,7 +101,9 @@ const CommonUploadButton: React.FC<CommonUploadButtonProps> = ({
   };
 
   const getChangeValue = (info: any) => {
-    setFileList(info?.fileList);
+    if (showFileList) {
+      setFileList(info?.fileList);
+    }
   };
 
   const renderLoading = () => {

@@ -1,4 +1,4 @@
-type ResourceType = '状态' | '锁定'
+type ResourceType = '状态' | '锁定' | '实名认证';
 
 const useCommonList = (resource: ResourceType) => {
   const commonMap = {
@@ -10,7 +10,7 @@ const useCommonList = (resource: ResourceType) => {
       map: {
         0: '禁用',
         1: '正常',
-      }
+      },
     },
     锁定: {
       options: [
@@ -20,12 +20,22 @@ const useCommonList = (resource: ResourceType) => {
       map: {
         0: '是',
         1: '否',
-      }
-    }
-  }
+      },
+    },
+    实名认证: {
+      options: [
+        { label: '是', value: 1 },
+        { label: '否', value: 0 },
+      ],
+      map: {
+        1: '是',
+        0: '否',
+      },
+    },
+  };
   return {
-    optionMap: commonMap?.[resource]
-  }
-}
+    optionMap: commonMap?.[resource],
+  };
+};
 
 export default useCommonList;

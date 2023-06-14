@@ -23,10 +23,11 @@ const Business: React.FC = () => {
   const { defaultPaegs, pages, setPages } = usePages();
   const { optionMap: statusOptionsMap } = useCommonList('状态');
   const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
+  const searchParamsProps = new URLSearchParams(location.search);
+  const [searchParams, setSearchParams] = useState<any>();
   // 获取具体的搜索参数值
-  const userName = searchParams.get('userName');
-  const userId = searchParams.get('userId');
+  const userName = searchParamsProps.get('userName');
+  const userId = searchParamsProps.get('userId');
   // const queryParams = queryString.parse(location.search);
   const formatMap = {
     status: {
@@ -77,6 +78,9 @@ const Business: React.FC = () => {
       getListFn({
         userId: userId,
       });
+      setSearchParams({
+        userId,
+      });
     }
   }, [userId]);
 
@@ -84,6 +88,7 @@ const Business: React.FC = () => {
     getListRequest.run({
       pageNum: pages?.current,
       pageSize: pages?.pageSize,
+      ...searchParams,
       ..._params,
       // pageSize: 20,
       // pageNum: 1
@@ -94,6 +99,7 @@ const Business: React.FC = () => {
     await form.validateFields();
     const _formData = await form.getFieldsValue();
     getListFn(_formData);
+    setSearchParams(_formData);
   };
 
   const editFn = () => {
@@ -215,7 +221,12 @@ const Business: React.FC = () => {
           </Col>
         </Row>
       </Form>
-      <List list={list} pages={pages} loading={getListRequest?.loading} />
+      <List
+        freshCallback={() => getListFn({})}
+        list={list}
+        pages={pages}
+        loading={getListRequest?.loading}
+      />
       <Edit ref={editRef} setRefreshDeps={setRefreshDeps} />
     </div>
   );

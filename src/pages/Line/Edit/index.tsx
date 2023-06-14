@@ -5,6 +5,7 @@ import { CommonModal } from '@/components';
 import { useRequest } from 'ahooks';
 import LineService from '@/services/line';
 import { SelectLocal } from '@/components';
+import moment from 'moment';
 
 interface LineEditProps {
   setRefreshDeps?: () => void;
@@ -15,14 +16,14 @@ const LineEdit = forwardRef(({ setRefreshDeps }: LineEditProps, parentRef) => {
   const [form] = Form.useForm();
   const lineId = Form.useWatch('lineId', form);
   const [customerList, setCustomerList] = useState<any[]>([]);
+  const format = 'YYYY-MM-DD';
 
   useImperativeHandle(parentRef, () => ({
-    init: ({ id }) => {
+    init: ({ id }: { id: number }) => {
       setVisible();
       if (id) {
         getDetailRequest.run(id);
       }
-      getCustomerRequest.run();
     },
   }));
 
@@ -37,7 +38,13 @@ const LineEdit = forwardRef(({ setRefreshDeps }: LineEditProps, parentRef) => {
   const getDetailRequest = useRequest(LineService.detail, {
     manual: true,
     debounceWait: 500,
-    onSuccess: (data) => {},
+    onSuccess: (data) => {
+      form.setFieldsValue({
+        ...data?.data,
+        // failureTime: undefined
+        // failureTime: moment(data?.data?.failureTime).format(format)
+      });
+    },
   });
 
   const getUpdateRequestFn = () => {
@@ -126,12 +133,12 @@ const LineEdit = forwardRef(({ setRefreshDeps }: LineEditProps, parentRef) => {
             />
           </Form.Item>
           <Form.Item
-            label="ip地址"
+            label="ip（节点线路）"
             name="ipAddr"
             rules={[
               {
                 required: true,
-                message: '请输入ip地址',
+                message: '请输入ip（节点线路）',
               },
             ]}
           >

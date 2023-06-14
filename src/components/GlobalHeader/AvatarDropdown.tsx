@@ -39,6 +39,8 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
       history.push('/person-center');
     } else if (key === 'update-belong') {
       history.push('/update-belong');
+    } else if (key === 'update-password') {
+      history.push('/update-password');
     }
   };
 

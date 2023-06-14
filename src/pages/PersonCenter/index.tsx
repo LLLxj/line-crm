@@ -20,7 +20,7 @@ const PersonCenter: React.FC<PersonCenterProps> = ({ userInfo }) => {
   const frontPath = Form.useWatch('frontPath', form);
   const backPath = Form.useWatch('backPath', form);
   const personPath = Form.useWatch('personPath', form);
-  const { optionMap } = useCommonList('锁定');
+  const { optionMap } = useCommonList('实名认证');
 
   const getInfoRequest = useRequest(CustomerService.info, {
     manual: true,

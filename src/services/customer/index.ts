@@ -64,6 +64,18 @@ class Customer {
     });
   }
 
+  static pass(data: number): Promise<any> {
+    return request(`/sys/client/pass/${data}`, {
+      method: 'put',
+    });
+  }
+
+  static reject(data: number): Promise<any> {
+    return request(`/sys/client/reject/${data}`, {
+      method: 'put',
+    });
+  }
+
   static updateBelong(data: number): Promise<any> {
     return request(`/sys/client/change/sale/${data}`, {
       method: 'put',

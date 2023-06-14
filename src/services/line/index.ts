@@ -35,19 +35,19 @@ class Line {
   }
 
   static detail(data: number): Promise<any> {
-    return request(`/sys/line/${data}`, {
+    return request(`/sys/line/info/${data}`, {
       method: 'get',
     });
   }
 
   static normal(data: number): Promise<any> {
-    return request(`/sys/line/client/normal/${data}`, {
+    return request(`/sys/line/normal/${data}`, {
       method: 'put',
     });
   }
 
   static disabled(data: number): Promise<any> {
-    return request(`/sys/line/client/disable/${data}`, {
+    return request(`/sys/line/disable/${data}`, {
       method: 'put',
     });
   }

@@ -177,7 +177,12 @@ const Customer: React.FC = () => {
           </Col>
         </Row>
       </Form>
-      <List list={list} pages={pages} loading={getListRequest?.loading} />
+      <List
+        list={list}
+        pages={pages}
+        loading={getListRequest?.loading}
+        freshCallback={getListFn}
+      />
       {/* <Table
         rowKey={(record) => record?.key}
         loading={getListRequest?.loading}

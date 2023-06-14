@@ -94,19 +94,7 @@ const CommonImport: React.FC<CommonImportProps> = ({
         maskClosable={false}
         onCancel={handleCancel}
         centered
-        footer={[
-          <Button key="back" onClick={handleCancel}>
-            取消
-          </Button>,
-          <Button
-            key="submit"
-            type="primary"
-            disabled={renderLoading()}
-            onClick={handleOk}
-          >
-            确定
-          </Button>,
-        ]}
+        footer={null}
       >
         <Spin spinning={renderLoading()}>
           <Form
@@ -120,16 +108,12 @@ const CommonImport: React.FC<CommonImportProps> = ({
                 下载模板
               </Button>
             </Form.Item>
-            <Form.Item
-              label="文件"
-              name="requiredList"
-              required
-              rules={[{ required: true, message: '请上传文件' }]}
-            >
+            <Form.Item label="文件" name="requiredList">
               <CommonUpload
                 asyncHandle={sourceRequestMap?.[resource]?.upload}
                 asyncParams={{}}
                 uploadCallback={uploadCallback}
+                showFileList={false}
               />
             </Form.Item>
           </Form>

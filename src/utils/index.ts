@@ -95,9 +95,9 @@ const uploadBlob = (data: any, fileName: string) => {
     new Blob(
       [blob],
       // { type: 'application/vnd.ms-excel' }
-      {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      },
+      // {
+      //   type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      // },
     ),
   );
   link.download = fileName;

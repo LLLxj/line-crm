@@ -113,21 +113,19 @@ const checkStauts = (response: SrmResponseProps) => {
       message.error(response.msg);
       return Promise.reject(response);
     }
+    case 1001: {
+      message.error(response.msg);
+      return Promise.reject(response);
+    }
     case 400: {
       message.error(response.msg);
       return Promise.reject(response);
     }
-    case 401: {
-      if (response.code === 401) {
+    case 1018: {
+      if (response.code === 1018) {
         message.warning('登录已失效，请重新登录');
-        localStorage.removeItem('authorization');
-        localStorage.removeItem('refresh-token');
-        const _oldRedirect = localStorage.getItem('redirect');
-        const _pathname = history.location.pathname;
-        if (!_oldRedirect) {
-          localStorage.setItem('redirect', _pathname);
-        }
-        history.push('/user/login');
+        localStorage.removeItem('token');
+        history.push('/login');
       }
       return Promise.reject(response);
     }

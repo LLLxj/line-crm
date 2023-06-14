@@ -2,7 +2,17 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useRequest, useSize } from 'ahooks';
 import CustomerService from '@/services/customer';
 import { usePages, useContainerSize } from '@/hooks';
-import { Table, Form, Row, Col, Input, Button, message, Space } from 'antd';
+import {
+  Table,
+  Form,
+  Row,
+  Col,
+  Input,
+  Button,
+  message,
+  Space,
+  Image,
+} from 'antd';
 import { CommonLayoutSpace, Access } from '@/components';
 import { countTableCellWidth } from '@/utils';
 import Edit from './Edit';
@@ -87,6 +97,24 @@ const Customer: React.FC = () => {
     },
   });
 
+  const passRequest = useRequest(CustomerService.pass, {
+    manual: true,
+    debounceWait: 500,
+    onSuccess: () => {
+      message.success('操作成功');
+      setRefreshDeps();
+    },
+  });
+
+  const rejectRequest = useRequest(CustomerService.reject, {
+    manual: true,
+    debounceWait: 500,
+    onSuccess: () => {
+      message.success('操作成功');
+      setRefreshDeps();
+    },
+  });
+
   const resetPwdRequest = useRequest(CustomerService.resetPassword, {
     manual: true,
     debounceWait: 500,
@@ -148,6 +176,14 @@ const Customer: React.FC = () => {
     unlockRequest.run(_id);
   };
 
+  const passHandle = (_id: number) => {
+    passRequest.run(_id);
+  };
+
+  const rejectHandle = (_id: number) => {
+    rejectRequest.run(_id);
+  };
+
   const resetPwdHandle = (_id: number) => {
     resetPwdRequest.run(_id);
   };
@@ -178,6 +214,13 @@ const Customer: React.FC = () => {
     {
       title: '手机号',
       dataIndex: 'phone',
+    },
+    {
+      title: '个人照',
+      dataIndex: 'personPath',
+      render: (_, record) => {
+        return <Image width={80} src={record?.personPath} />;
+      },
     },
     {
       title: '登录IP',
@@ -220,6 +263,16 @@ const Customer: React.FC = () => {
                 </Button>
               </Access>
             )}
+            <Access permission="修改客户状态">
+              <Button type="link" onClick={() => passHandle(record.userId)}>
+                通过
+              </Button>
+            </Access>
+            <Access permission="修改客户状态">
+              <Button type="link" onClick={() => rejectHandle(record.userId)}>
+                驳回
+              </Button>
+            </Access>
             <Access permission="解锁客户">
               <Button type="link" onClick={() => unlockHandle(record.userId)}>
                 解锁用户
