@@ -29,7 +29,7 @@ class Line {
 
   static update(data: any): Promise<any> {
     return request(`/sys/line/update`, {
-      method: 'put',
+      method: 'post',
       data,
     });
   }

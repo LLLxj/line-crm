@@ -69,7 +69,8 @@ const Business: React.FC = () => {
     manual: true,
     debounceWait: 500,
     onSuccess: (data) => {
-      uploadBlob(data, '线路列表.xlsx');
+      console.log(typeof data);
+      uploadBlob(data, 'IPLineDocument.xlsx');
     },
   });
 

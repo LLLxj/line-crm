@@ -1,7 +1,7 @@
 import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import { Form, Button, Spin, Input, message, DatePicker } from 'antd';
 import { useToggle } from 'react-use';
-import { CommonModal } from '@/components';
+import { CommonModal, AutoComplete } from '@/components';
 import { useRequest } from 'ahooks';
 import LineService from '@/services/line';
 import { SelectLocal } from '@/components';
@@ -15,8 +15,9 @@ const LineEdit = forwardRef(({ setRefreshDeps }: LineEditProps, parentRef) => {
   const [visible, setVisible] = useToggle(false);
   const [form] = Form.useForm();
   const lineId = Form.useWatch('lineId', form);
+  const userId = Form.useWatch('userId', form);
   const [customerList, setCustomerList] = useState<any[]>([]);
-  const format = 'YYYY-MM-DD';
+  const format = 'YYYY-MM-DD HH:mm:ss';
 
   useImperativeHandle(parentRef, () => ({
     init: ({ id }: { id: number }) => {
@@ -41,8 +42,8 @@ const LineEdit = forwardRef(({ setRefreshDeps }: LineEditProps, parentRef) => {
     onSuccess: (data) => {
       form.setFieldsValue({
         ...data?.data,
+        failureTime: moment(data?.data?.failureTime),
         // failureTime: undefined
-        // failureTime: moment(data?.data?.failureTime).format(format)
       });
     },
   });
@@ -72,10 +73,12 @@ const LineEdit = forwardRef(({ setRefreshDeps }: LineEditProps, parentRef) => {
 
   const submit = async () => {
     const _value = await form.validateFields();
-    console.log(_value);
-    updateRequest.run({
+    const formData = {
       ..._value,
-    });
+      failureTime: _value?.failureTime?.format(format),
+    };
+    console.log(formData);
+    updateRequest.run(formData);
   };
 
   const renderLoading = () => {
@@ -126,12 +129,17 @@ const LineEdit = forwardRef(({ setRefreshDeps }: LineEditProps, parentRef) => {
               },
             ]}
           >
-            <SelectLocal
-              list={customerList}
+            <AutoComplete
+              asyncHandle={LineService.getAllCustomer}
+              asyncKeyword="nameOrId"
               selectKey="userId"
               selectLabel="userName"
+              valueExtension={{
+                userId: userId,
+              }}
             />
           </Form.Item>
+
           <Form.Item
             label="ip（节点线路）"
             name="ipAddr"
@@ -139,6 +147,30 @@ const LineEdit = forwardRef(({ setRefreshDeps }: LineEditProps, parentRef) => {
               {
                 required: true,
                 message: '请输入ip（节点线路）',
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="线路账号"
+            name="lineAccount"
+            rules={[
+              {
+                required: true,
+                message: '请输入线路账号',
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="线路密码"
+            name="linePwd"
+            rules={[
+              {
+                required: true,
+                message: '请输入线路密码',
               },
             ]}
           >
@@ -154,7 +186,7 @@ const LineEdit = forwardRef(({ setRefreshDeps }: LineEditProps, parentRef) => {
               },
             ]}
           >
-            <DatePicker />
+            <DatePicker showTime />
           </Form.Item>
         </Form>
       </Spin>
