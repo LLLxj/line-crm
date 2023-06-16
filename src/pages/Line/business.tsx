@@ -69,8 +69,8 @@ const Business: React.FC = () => {
     manual: true,
     debounceWait: 500,
     onSuccess: (data) => {
-      console.log(typeof data);
-      uploadBlob(data, 'IPLineDocument.xlsx');
+      window.open(data?.data, '_blank');
+      // uploadBlob(data, 'IPLineDocument.xlsx');
     },
   });
 

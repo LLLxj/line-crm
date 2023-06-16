@@ -51,7 +51,8 @@ const Customer: React.FC = () => {
     manual: true,
     debounceWait: 500,
     onSuccess: (data) => {
-      uploadBlob(data, '线路列表.xlsx');
+      window.open(data?.data, '_blank');
+      // uploadBlob(data, '线路列表.xlsx');
     },
   });
 

@@ -4,7 +4,6 @@ import type { Dispatch } from 'umi';
 import type { ConnectState } from '@/models/connect';
 import { connect } from 'umi';
 import './index.less';
-import * as CrytoJS from 'crypto-js';
 import type { HandleType } from './type';
 import { KeyOutlined, PhoneOutlined, UserOutlined } from '@ant-design/icons';
 import { AutoComplete } from '@/components';
@@ -50,10 +49,6 @@ const Login: React.FC<LoginProps> = ({ dispatch }) => {
         },
       });
     }
-  };
-
-  const encryptFn = () => {
-    const key = CrytoJS.enc.Utf8.parse;
   };
 
   const onChange = (value: HandleType) => {
@@ -177,7 +172,6 @@ const Login: React.FC<LoginProps> = ({ dispatch }) => {
   );
 };
 
-export default connect(({ login, loading }: ConnectState) => ({
-  userLogin: login,
-  submitting: loading.effects['login/login'],
+export default connect(({ login }: ConnectState) => ({
+  login: login,
 }))(Login);

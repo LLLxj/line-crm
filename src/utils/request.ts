@@ -49,6 +49,11 @@ const errorHandler = (error: { response: Response; data: any }): Response => {
         description: errorText,
       });
     }
+    if (status === 403) {
+      message.warning('登录已失效，请重新登录');
+      localStorage.removeItem('token');
+      history.replace('/login');
+    }
     if (status === 502) {
       notification.error({
         message: codeMessage?.[status],
@@ -127,6 +132,12 @@ const checkStauts = (response: SrmResponseProps) => {
         localStorage.removeItem('token');
         history.push('/login');
       }
+      return Promise.reject(response);
+    }
+    case 1019: {
+      message.warning('登录已失效，请重新登录');
+      localStorage.removeItem('token');
+      history.push('/login');
       return Promise.reject(response);
     }
     case 403: {

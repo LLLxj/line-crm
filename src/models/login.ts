@@ -34,15 +34,15 @@ const Model: LoginModelType = {
   },
 
   effects: {
-    async login(data, { call, put }) {
+    *login(data, { call, put }) {
       try {
+        console.log(data);
         const {
           payload: { params },
         } = data;
-        const _response = await System.login(params);
+        const _response = yield System.login(params);
         localStorage.setItem('token', _response.data.token);
         localStorage.setItem('userId', _response.data.userId);
-
         history.replace('/dashboard');
       } catch (err) {
         console.log(err);

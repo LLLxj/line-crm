@@ -263,16 +263,23 @@ const Customer: React.FC = () => {
                 </Button>
               </Access>
             )}
-            <Access permission="修改客户状态">
-              <Button type="link" onClick={() => passHandle(record.userId)}>
-                通过
-              </Button>
-            </Access>
-            <Access permission="修改客户状态">
-              <Button type="link" onClick={() => rejectHandle(record.userId)}>
-                驳回
-              </Button>
-            </Access>
+            {record?.isAudit === 0 && (
+              <>
+                <Access permission="修改客户状态">
+                  <Button type="link" onClick={() => passHandle(record.userId)}>
+                    通过
+                  </Button>
+                </Access>
+                <Access permission="修改客户状态">
+                  <Button
+                    type="link"
+                    onClick={() => rejectHandle(record.userId)}
+                  >
+                    驳回
+                  </Button>
+                </Access>
+              </>
+            )}
             <Access permission="解锁客户">
               <Button type="link" onClick={() => unlockHandle(record.userId)}>
                 解锁用户
