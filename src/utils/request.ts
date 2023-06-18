@@ -101,7 +101,7 @@ request.interceptors.response.use((response: Response) => {
   return response;
 });
 
-const checkStauts = (response: SrmResponseProps) => {
+const checkStauts = (response: SrmResponseProps, url: string) => {
   if (!response) {
     return Promise.reject(response);
   }
@@ -119,7 +119,11 @@ const checkStauts = (response: SrmResponseProps) => {
       return Promise.reject(response);
     }
     case 1001: {
-      message.error(response.msg);
+      if (url?.includes('sys/line/upload/excel')) {
+        message.warning(response.msg, 5);
+      } else {
+        message.error(response.msg);
+      }
       return Promise.reject(response);
     }
     case 400: {
@@ -151,7 +155,9 @@ const checkStauts = (response: SrmResponseProps) => {
 };
 
 const httpRequest = (url: string, options?: any) => {
-  return request(url, options).then((response: any) => checkStauts(response));
+  return request(url, options).then((response: any) =>
+    checkStauts(response, url),
+  );
 };
 
 export default httpRequest;

@@ -22,8 +22,14 @@ import { SelectLocal } from '@/components';
 import { useCommonList } from '@/hooks';
 import ChangePwd from './ChangePwd';
 import { history } from 'umi';
+import { connect } from 'umi';
+import type { ConnectState } from '@/models/connect';
 
-const Customer: React.FC = () => {
+interface CustomerProps {
+  userInfo: any;
+}
+
+const Customer: React.FC<CustomerProps> = ({ userInfo }) => {
   const [list, setList] = useState<any[]>([]);
   const [tableWidth, setTableWidth] = useState<number>();
   const [form] = Form.useForm();
@@ -263,23 +269,28 @@ const Customer: React.FC = () => {
                 </Button>
               </Access>
             )}
-            {record?.isAudit === 0 && (
-              <>
-                <Access permission="修改客户状态">
-                  <Button type="link" onClick={() => passHandle(record.userId)}>
-                    通过
-                  </Button>
-                </Access>
-                <Access permission="修改客户状态">
-                  <Button
-                    type="link"
-                    onClick={() => rejectHandle(record.userId)}
-                  >
-                    驳回
-                  </Button>
-                </Access>
-              </>
-            )}
+            {record?.isAudit === 0 &&
+              userInfo?.user?.isUpload === 1 &&
+              userInfo?.user?.verify === 0 && (
+                <>
+                  <Access permission="修改客户状态">
+                    <Button
+                      type="link"
+                      onClick={() => passHandle(record.userId)}
+                    >
+                      通过
+                    </Button>
+                  </Access>
+                  <Access permission="修改客户状态">
+                    <Button
+                      type="link"
+                      onClick={() => rejectHandle(record.userId)}
+                    >
+                      驳回
+                    </Button>
+                  </Access>
+                </>
+              )}
             <Access permission="解锁客户">
               <Button type="link" onClick={() => unlockHandle(record.userId)}>
                 解锁用户
@@ -419,4 +430,6 @@ const Customer: React.FC = () => {
   );
 };
 
-export default Customer;
+export default connect(({ login }: ConnectState) => ({
+  userInfo: login.userInfo,
+}))(Customer);

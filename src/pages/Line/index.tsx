@@ -14,10 +14,16 @@ interface ListProps {
   loading: boolean;
   pages: any;
   freshCallback?: () => void;
+  resource: 'business' | 'customer';
 }
 
-const List: React.FC<ListProps> = ({ list, pages, loading, freshCallback }) => {
-  const [refreshDeps, setRefreshDeps] = useToggle(false);
+const List: React.FC<ListProps> = ({
+  list,
+  pages,
+  loading,
+  freshCallback,
+  resource,
+}) => {
   const editRef = useRef<ModalInitRef>();
 
   const usefulRequest = useRequest(LineService.normal, {
@@ -71,41 +77,45 @@ const List: React.FC<ListProps> = ({ list, pages, loading, freshCallback }) => {
       title: '失效时间',
       dataIndex: 'failureTime',
     },
-    {
-      title: '状态',
-      dataIndex: 'statusLabel',
-    },
-    {
-      title: '操作',
-      dataIndex: 'handle',
-      fixed: 'right',
-      titleCol: 10,
-      render: (_, record: any) => {
-        return (
-          <>
-            {record.status ? (
-              // <Access permission="修改用户状态">
-              <Button type="link" onClick={() => disHandle(record.lineId)}>
-                禁用
-              </Button>
-            ) : (
-              // </Access>
-              // <Access permission="修改用户状态">
-              <Button type="link" onClick={() => useHandle(record.lineId)}>
-                启用
-              </Button>
-              // </Access>
-            )}
-            {/* <Access permission="修改用户"> */}
-            <Button type="link" onClick={() => editFn(record.lineId)}>
-              编辑
-            </Button>
-            {/* </Access> */}
-          </>
-        );
-      },
-    },
-  ];
+    resource === 'business'
+      ? {
+          title: '状态',
+          dataIndex: 'statusLabel',
+        }
+      : undefined,
+    resource === 'business'
+      ? {
+          title: '操作',
+          dataIndex: 'handle',
+          fixed: 'right',
+          titleCol: 10,
+          render: (_, record: any) => {
+            return (
+              <>
+                {record.status ? (
+                  // <Access permission="修改用户状态">
+                  <Button type="link" onClick={() => disHandle(record.lineId)}>
+                    禁用
+                  </Button>
+                ) : (
+                  // </Access>
+                  // <Access permission="修改用户状态">
+                  <Button type="link" onClick={() => useHandle(record.lineId)}>
+                    启用
+                  </Button>
+                  // </Access>
+                )}
+                {/* <Access permission="修改用户"> */}
+                <Button type="link" onClick={() => editFn(record.lineId)}>
+                  编辑
+                </Button>
+                {/* </Access> */}
+              </>
+            );
+          },
+        }
+      : undefined,
+  ]?.filter(Boolean);
 
   return (
     <>
@@ -120,7 +130,7 @@ const List: React.FC<ListProps> = ({ list, pages, loading, freshCallback }) => {
         //   x: tableWidth
         // }}
       />
-      <Edit ref={editRef} />
+      <Edit ref={editRef} successCallback={freshCallback} />
     </>
   );
 };

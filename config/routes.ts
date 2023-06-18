@@ -147,6 +147,7 @@
             name: '开通线路',
             path: '/open-line',
             component: './LineOpen',
+            permissionCodes: ['开通线路'],
           },
         ],
       },

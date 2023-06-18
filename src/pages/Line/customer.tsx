@@ -183,18 +183,8 @@ const Customer: React.FC = () => {
         pages={pages}
         loading={getListRequest?.loading}
         freshCallback={getListFn}
+        resource="customer"
       />
-      {/* <Table
-        rowKey={(record) => record?.key}
-        loading={getListRequest?.loading}
-        columns={columns}
-        dataSource={list}
-        bordered
-        scroll={{
-          x: tableWidth,
-        }}
-      /> */}
-      <Edit ref={editRef} />
     </div>
   );
 };

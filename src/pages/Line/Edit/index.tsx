@@ -8,10 +8,10 @@ import { SelectLocal } from '@/components';
 import moment from 'moment';
 
 interface LineEditProps {
-  setRefreshDeps?: () => void;
+  successCallback?: () => void;
 }
 
-const LineEdit = forwardRef(({ setRefreshDeps }: LineEditProps, parentRef) => {
+const LineEdit = forwardRef(({ successCallback }: LineEditProps, parentRef) => {
   const [visible, setVisible] = useToggle(false);
   const [form] = Form.useForm();
   const lineId = Form.useWatch('lineId', form);
@@ -43,7 +43,6 @@ const LineEdit = forwardRef(({ setRefreshDeps }: LineEditProps, parentRef) => {
       form.setFieldsValue({
         ...data?.data,
         failureTime: moment(data?.data?.failureTime),
-        // failureTime: undefined
       });
     },
   });
@@ -62,7 +61,7 @@ const LineEdit = forwardRef(({ setRefreshDeps }: LineEditProps, parentRef) => {
     onSuccess: (data) => {
       message.success('操作成功');
       onCancel();
-      setRefreshDeps && setRefreshDeps();
+      successCallback && successCallback();
     },
   });
 
@@ -77,7 +76,6 @@ const LineEdit = forwardRef(({ setRefreshDeps }: LineEditProps, parentRef) => {
       ..._value,
       failureTime: _value?.failureTime?.format(format),
     };
-    console.log(formData);
     updateRequest.run(formData);
   };
 

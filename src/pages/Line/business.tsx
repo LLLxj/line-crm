@@ -41,7 +41,6 @@ const Business: React.FC = () => {
   };
   const editRef = useRef<ModalInitRef>();
   const searchColSpan = 6;
-  const [customerList, setCustomerList] = useState<any[]>([]);
 
   const getListRequest = useRequest(LineService.businessList, {
     manual: true,
@@ -68,10 +67,7 @@ const Business: React.FC = () => {
   const exportRequest = useRequest(LineService.exportBisiness, {
     manual: true,
     debounceWait: 500,
-    onSuccess: (data) => {
-      window.open(data?.data, '_blank');
-      // uploadBlob(data, 'IPLineDocument.xlsx');
-    },
+    onSuccess: (data) => {},
   });
 
   useEffect(() => {
@@ -227,8 +223,8 @@ const Business: React.FC = () => {
         list={list}
         pages={pages}
         loading={getListRequest?.loading}
+        resource="business"
       />
-      <Edit ref={editRef} setRefreshDeps={setRefreshDeps} />
     </div>
   );
 };
