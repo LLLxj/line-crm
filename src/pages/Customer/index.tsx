@@ -425,7 +425,7 @@ const Customer: React.FC<CustomerProps> = ({ userInfo }) => {
         onChange={pageChange}
       />
       <Edit ref={editRef} />
-      <ChangePwd ref={changePwdRef} />/
+      <ChangePwd ref={changePwdRef} />
     </Space>
   );
 };
