@@ -52,7 +52,6 @@ const Customer: React.FC = () => {
     debounceWait: 500,
     onSuccess: (data) => {
       window.open(data?.data, '_blank');
-      // uploadBlob(data, '线路列表.xlsx');
     },
   });
 
@@ -172,7 +171,11 @@ const Customer: React.FC = () => {
             </Button>
           </Col>
           <Col>
-            <Button type="primary" onClick={exportFn}>
+            <Button
+              type="primary"
+              onClick={exportFn}
+              loading={exportRequest?.loading}
+            >
               导出
             </Button>
           </Col>

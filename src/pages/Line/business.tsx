@@ -67,7 +67,9 @@ const Business: React.FC = () => {
   const exportRequest = useRequest(LineService.exportBisiness, {
     manual: true,
     debounceWait: 500,
-    onSuccess: (data) => {},
+    onSuccess: (data) => {
+      window.open(data?.data, '_blank');
+    },
   });
 
   useEffect(() => {
@@ -77,6 +79,9 @@ const Business: React.FC = () => {
       });
       setSearchParams({
         userId,
+      });
+      form.setFieldsValue({
+        userId: userId,
       });
     }
   }, [userId]);
@@ -178,6 +183,16 @@ const Business: React.FC = () => {
                 asyncKeyword="nameOrId"
                 selectKey="userId"
                 selectLabel="userName"
+                listExtensions={
+                  userId
+                    ? [
+                        {
+                          label: userName,
+                          value: userId,
+                        },
+                      ]
+                    : []
+                }
                 valueExtension={{
                   userName,
                   userId,
@@ -205,7 +220,11 @@ const Business: React.FC = () => {
             </Button>
           </Col>
           <Col>
-            <Button type="primary" onClick={exportFn}>
+            <Button
+              type="primary"
+              onClick={exportFn}
+              loading={exportRequest?.loading}
+            >
               导出
             </Button>
           </Col>
