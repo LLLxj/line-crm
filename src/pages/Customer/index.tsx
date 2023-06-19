@@ -270,8 +270,8 @@ const Customer: React.FC<CustomerProps> = ({ userInfo }) => {
               </Access>
             )}
             {record?.isAudit === 0 &&
-              userInfo?.user?.isUpload === 1 &&
-              userInfo?.user?.verify === 0 && (
+              record?.isUpload === 1 &&
+              record?.verify === 0 && (
                 <>
                   <Access permission="修改客户状态">
                     <Button
