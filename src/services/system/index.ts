@@ -16,7 +16,7 @@ class System {
   }
 
   static vertication(data: any): Promise<any> {
-    return request(`/sys/client/approve`, {
+    return request(`/sys/client/approve/image`, {
       method: 'post',
       data,
     });
