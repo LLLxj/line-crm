@@ -30,7 +30,7 @@ const GlobalHeaderRight: React.SFC<GlobalHeaderRightProps> = (props) => {
   const [visible, setVisible] = useToggle(false);
 
   useEffect(() => {
-    if (userInfo?.user?.isUpload === 1 && userInfo?.user?.isClient === 1) {
+    if (userInfo?.user?.isUpload === 0 && userInfo?.user?.isClient === 1) {
       // verticationRef.current.init({})
       // renderVertify()
       if (!visible) {
