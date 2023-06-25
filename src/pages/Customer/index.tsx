@@ -2,29 +2,18 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useRequest, useSize } from 'ahooks';
 import CustomerService from '@/services/customer';
 import { usePages, useContainerSize } from '@/hooks';
-import {
-  Table,
-  Form,
-  Row,
-  Col,
-  Input,
-  Button,
-  message,
-  Space,
-  Image,
-} from 'antd';
+import { Table, Form, Row, Col, Input, Button, message, Space } from 'antd';
 import { CommonLayoutSpace, Access } from '@/components';
 import { countTableCellWidth } from '@/utils';
 import Edit from './Edit';
 import type { ModalInitRef } from '@/pages/type';
 import { useToggle } from 'react-use';
-import { SelectLocal } from '@/components';
+import { SelectLocal, CommonImage } from '@/components';
 import { useCommonList } from '@/hooks';
 import ChangePwd from './ChangePwd';
 import { history } from 'umi';
 import { connect } from 'umi';
 import type { ConnectState } from '@/models/connect';
-
 interface CustomerProps {
   userInfo: any;
 }
@@ -225,7 +214,7 @@ const Customer: React.FC<CustomerProps> = ({ userInfo }) => {
       title: '个人照',
       dataIndex: 'personPath',
       render: (_, record) => {
-        return <Image width={80} src={record?.personPath} />;
+        return <CommonImage width={80} src={record?.personPath} />;
       },
     },
     {

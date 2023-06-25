@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
-import { Form, Row, Input, Image } from 'antd';
+import { Form, Row, Input } from 'antd';
 import { connect } from 'umi';
 import type { ConnectState } from '@/models/connect';
 import CustomerService from '@/services/customer';
 import { useRequest } from 'ahooks';
 import { useCommonList } from '@/hooks';
-import { SelectLocal, PreviewPic } from '@/components';
+import { SelectLocal, CommonImage } from '@/components';
 
 interface PersonCenterProps {
   userInfo: any;
@@ -65,13 +65,13 @@ const PersonCenter: React.FC<PersonCenterProps> = ({ userInfo }) => {
           />
         </Form.Item>
         <Form.Item label="身份证正面照" name="frontPath">
-          <Image width={80} src={frontPath} />
+          <CommonImage width={80} src={frontPath} />
         </Form.Item>
         <Form.Item label="身份证背面照" name="backPath">
-          <Image width={80} src={backPath} />
+          <CommonImage width={80} src={backPath} />
         </Form.Item>
         <Form.Item label="个人照" name="personPath">
-          <Image width={80} src={personPath} />
+          <CommonImage width={80} src={personPath} />
         </Form.Item>
       </Form>
     </Row>

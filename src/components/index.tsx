@@ -7,6 +7,7 @@ import Vertication from './Vertication';
 import Access from './Access';
 import CommonImport from './CommonImport';
 import PreviewPic from './PreviewPic';
+import CommonImage from './CommonImage';
 
 export {
   CommonLayoutSpace,
@@ -18,4 +19,5 @@ export {
   Access,
   CommonImport,
   PreviewPic,
+  CommonImage,
 };
