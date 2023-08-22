@@ -244,6 +244,7 @@ const Business: React.FC = () => {
         loading={getListRequest?.loading}
         resource="business"
       />
+      <Edit ref={editRef} successCallback={() => getListFn({})} />
     </div>
   );
 };

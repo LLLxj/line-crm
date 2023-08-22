@@ -188,6 +188,7 @@ const Customer: React.FC = () => {
         freshCallback={getListFn}
         resource="customer"
       />
+      <Edit ref={editRef} successCallback={getListFn} />
     </div>
   );
 };
